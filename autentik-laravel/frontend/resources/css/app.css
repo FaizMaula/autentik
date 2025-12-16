@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+/* Custom Animations and UI enhancements */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+}
+.animate-slide-up {
+    animation: slide-up 1s ease-out 0.3s both;
+}
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Smooth Transitions and Scrollbar styles */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #4a7c87 #c5d3d8;
+}
+*::-webkit-scrollbar {
+    width: 10px;
+}
+*::-webkit-scrollbar-track {
+    background: #c5d3d8;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #4a7c87;
+    border-radius: 5px;
+    border: 2px solid #c5d3d8;
+}
+::selection {
+    background-color: #4a7c87;
+    color: white;
+}
+::-moz-selection {
+    background-color: #4a7c87;
+    color: white;
+}
+
+html {
+    scroll-behavior: smooth;
+}

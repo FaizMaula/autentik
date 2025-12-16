@@ -1,0 +1,84 @@
+{
+    "nav": {
+        "home": "Home",
+        "aboutUs": "About us"
+    },
+    "hero": {
+        "title": "Verifikasi Keaslian Sertifikat dalam Detik.",
+        "subtitle": "Pastikan validitas ijazah, sertifikat pelatihan, atau kredensial profesional. Platform kami yang cepat, aman, dan akurat memberikan Anda kepastian instan.",
+        "ctaPrimary": "Cek Sekarang",
+        "ctaSecondary": "Pelajari cara kerjanya"
+    },
+    "process": {
+        "title": "Proses Cepat, Hasil Akurat",
+        "step1Title": "Langkah 1",
+        "step1Desc": "Unggah file sertifikat Anda",
+        "step2Title": "Langkah 2",
+        "step2Desc": "Sistem melakukan verifikasi multi-layer",
+        "step3Title": "Langkah 3",
+        "step3Desc": "Dapatkan hasil verifikasi lengkap"
+    },
+    "about": {
+        "title": "Kenapa Kami?",
+        "subtitle": "Kecepatan & Kepercayaan",
+        "card1Title": "Hasil Instan.",
+        "card1Desc": "Dapatkan konfirmasi keaslian sertifikat Anda dalam hitungan detik.",
+        "card2Title": "Aman & Terenkripsi",
+        "card2Desc": "Menggunakan standar enkripsi terbaru. Privasi dan keamanan data Anda adalah prioritas utama kami.",
+        "card3Title": "Data Terpercaya (Akurat)",
+        "card3Desc": "Verifikasi dilakukan langsung terhadap sumber data asli (database penerbit) untuk menjamin hasil yang 100% akurat.",
+        "professionalTitle": "Dibangun untuk Kebutuhan Profesional",
+        "proCard1Title": "Untuk Perekrut (HRD)",
+        "proCard1Desc": "Percepat proses rekrutmen dengan memvalidasi kredensial kandidat secara instan. Pastikan Anda merekrut orang yang tepat.",
+        "proCard2Title": "Untuk Institusi Pendidikan",
+        "proCard2Desc": "Verifikasi keabsahan transkrip nilai atau ijazah dari pelajar atau institusi lain dengan mudah.",
+        "proCard3Title": "Untuk Individu",
+        "proCard3Desc": "Berikan bukti nyata keaslian sertifikat Anda kepada calon pemberi kerja atau klien."
+    },
+    "form": {
+        "title": "Form Masukan",
+        "name": "Nama",
+        "namePlaceholder": "Masukkan nama",
+        "eventDate": "Tanggal Kegiatan",
+        "academicYear": "Tahun Ajaran",
+        "academicYearPlaceholder": "Pilih tahun akademik",
+        "startDate": "Tanggal Mulai",
+        "endDate": "Tanggal Selesai",
+        "additionalInfo": "Informasi Tambahan",
+        "organizer": "Penyelenggara",
+        "organizerPlaceholder": "Tulis Penyelenggara",
+        "eventName": "Nama Kegiatan",
+        "eventNamePlaceholder": "Tulis Nama Kegiatan",
+        "eventNameEng": "Nama Kegiatan Inggris",
+        "eventNameEngPlaceholder": "Tulis Nama Kegiatan Inggris",
+        "confirmData": "Pastikan seluruh data sudah terisi dengan benar",
+        "fileUpload": "Unggah Berkas",
+        "fileUploadDesc": "File jpg, png, pdf dengan maksimal 2 MB.",
+        "submitBtn": "Kirim",
+        "resetBtn": "Atur ulang"
+    },
+    "results": {
+        "title": "Hasil Verifikasi",
+        "subtitle": "Berikut adalah analisis lengkap verifikasi sertifikat Anda",
+        "overallStatus": "Status Keseluruhan",
+        "verified": "Terverifikasi",
+        "notVerified": "Tidak Terverifikasi",
+        "suspicious": "Mencurigakan",
+        "textMatching": "Text Matching",
+        "textMatchingDesc": "Analisis kemiripan teks pada sertifikat",
+        "metadata": "Metadata Verification",
+        "metadataDesc": "Verifikasi metadata dokumen",
+        "gamma": "Gamma Analysis",
+        "gammaDesc": "Analisis teknis gambar",
+        "googleSearch": "Google Search Results",
+        "googleSearchDesc": "Hasil pencarian terkait sertifikat",
+        "matchScore": "Skor Kemiripan",
+        "confidence": "Tingkat Kepercayaan",
+        "backToForm": "Verifikasi Lagi",
+        "downloadReport": "Unduh Laporan"
+    },
+    "footer": {
+        "copyright": "© 2025 Autentik.",
+        "tagline": "Platform Verifikasi Kredensial Independen."
+    }
+}

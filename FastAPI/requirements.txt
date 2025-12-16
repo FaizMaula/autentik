@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+torch
+transformers
+Pillow
+easyocr
+opencv-python
+joblib
+rapidfuzz
+google-api-python-client
+google-generativeai

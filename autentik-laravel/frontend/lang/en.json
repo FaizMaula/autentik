@@ -1,0 +1,81 @@
+{
+    "nav": { "home": "Home", "aboutUs": "About us" },
+    "hero": {
+        "title": "Verify Certificate Authenticity in Seconds.",
+        "subtitle": "Ensure the validity of diplomas, training certificates, or professional credentials. Our fast, secure, and accurate platform gives you instant certainty.",
+        "ctaPrimary": "Check Now",
+        "ctaSecondary": "Learn how it works"
+    },
+    "process": {
+        "title": "Fast Process, Accurate Results",
+        "step1Title": "Input Data",
+        "step1Desc": "Upload your certificate file",
+        "step2Title": "Step 2",
+        "step2Desc": "System performs multi-layer verification",
+        "step3Title": "Step 3",
+        "step3Desc": "Get complete verification results"
+    },
+    "about": {
+        "title": "Why Us?",
+        "subtitle": "Speed & Trust",
+        "card1Title": "Instant Results.",
+        "card1Desc": "Get confirmation of your certificate authenticity in seconds.",
+        "card2Title": "Safe & Encrypted",
+        "card2Desc": "Using the latest encryption standards. Your data privacy and security are our top priorities.",
+        "card3Title": "Trusted Data (Accurate)",
+        "card3Desc": "Verification is performed directly against the original data source (publisher database) to ensure 100% accurate results.",
+        "professionalTitle": "Built for Professional Needs",
+        "proCard1Title": "For Recruiters (HRD)",
+        "proCard1Desc": "Speed up the recruitment process by validating candidate credentials instantly. Make sure you hire the right people.",
+        "proCard2Title": "For Educational Institutions",
+        "proCard2Desc": "Verify the authenticity of transcripts or diplomas from students or other institutions easily.",
+        "proCard3Title": "For Individuals",
+        "proCard3Desc": "Provide tangible proof of your certificate authenticity to potential employers or clients."
+    },
+    "form": {
+        "title": "Input Form",
+        "name": "Name",
+        "namePlaceholder": "Enter name",
+        "eventDate": "Event Date",
+        "academicYear": "Academic Year",
+        "academicYearPlaceholder": "Select academic year",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "additionalInfo": "Additional Information",
+        "organizer": "Organizer",
+        "organizerPlaceholder": "Enter Organizer",
+        "eventName": "Event Name",
+        "eventNamePlaceholder": "Enter Event Name",
+        "eventNameEng": "Event Name (English)",
+        "eventNameEngPlaceholder": "Enter Event Name in English",
+        "confirmData": "Ensure all data is filled correctly",
+        "fileUpload": "Upload File",
+        "fileUploadDesc": "File jpg, png, pdf with maximum 2 MB.",
+        "submitBtn": "Submit",
+        "resetBtn": "Reset"
+    },
+    "results": {
+        "title": "Verification Results",
+        "subtitle": "Here is the complete analysis of your certificate verification",
+        "overallStatus": "Overall Status",
+        "verified": "Verified",
+        "notVerified": "Not Verified",
+        "suspicious": "Suspicious",
+        "textMatching": "Text Matching",
+        "textMatchingDesc": "Text similarity analysis on certificate",
+        "metadata": "Metadata Verification",
+        "metadataDesc": "Document metadata verification",
+        "gamma": "Gamma Analysis",
+        "gammaDesc": "Technical image analysis",
+        "googleSearch": "Google Search Results",
+        "googleSearchDesc": "Search results related to certificate",
+        "matchScore": "Match Score",
+        "confidence": "Confidence Level",
+        "backToForm": "Verify Again",
+        "downloadReport": "Download Report"
+    },
+    "footer": {
+        "copyright": "© 2025 Autentik.",
+        "tagline": "Independent Credential Verification Platform."
+    }
+}
