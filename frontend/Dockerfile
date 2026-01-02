@@ -21,6 +21,8 @@ RUN composer install --no-dev --optimize-autoloader \
     && php artisan route:clear \
     && php artisan view:clear
 
+RUN rm -f public/hot && rm -rf public/build
+
 # JS dependencies & build assets
 RUN npm install
 RUN npm run build
