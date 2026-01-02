@@ -28,7 +28,8 @@ RUN npm install
 RUN npm run build
 
 # Set permission
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www && \
+    chmod -R 755 /var/www/public/build
 
 # Copy Nginx config
 COPY ./docker/nginx.conf /etc/nginx/sites-available/default
