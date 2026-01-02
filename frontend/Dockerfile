@@ -1,31 +1,26 @@
 FROM php:8.2-fpm
 
-# Install system dependencies
+# install dependencies
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    && docker-php-ext-install \
-        pdo_mysql \
-        mbstring \
-        bcmath \
-        gd \
-        zip \
-    && apt-get clean \
+    git unzip libpng-dev libonig-dev libxml2-dev libzip-dev nginx \
+    && docker-php-ext-install pdo_mysql mbstring bcmath gd zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
-
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader \
+    && php artisan config:clear \
+    && php artisan route:clear \
+    && php artisan view:clear
 
 RUN chown -R www-data:www-data /var/www
 
-EXPOSE 9000
-CMD ["php-fpm"]
+# Copy Nginx config
+COPY ./docker/nginx.conf /etc/nginx/sites-available/default
+
+EXPOSE 8080
+
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]

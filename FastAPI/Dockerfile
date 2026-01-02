@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-# Install System Dependencies
-RUN apt-get update && apt-get install -y \
+# 1. Install System Dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     curl \
@@ -15,25 +15,36 @@ RUN apt-get update && apt-get install -y \
     libglvnd0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Python environment
-ENV OMP_NUM_THREADS=1
-ENV MKL_NUM_THREADS=1
+# 2. Setup User UID 1000 (Standar Hugging Face)
+# Hugging Face mengharuskan user dengan UID 1000
+RUN useradd -m -u 1000 user
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
 
-RUN python -m pip install --upgrade pip setuptools wheel
+# Set working directory di dalam home user
+WORKDIR $HOME/app
 
-WORKDIR /app
+# 3. Install Python Dependencies
+# Upgrade pip & install Torch CPU secara eksplisit agar image tidak bengkak
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
-# Copy & Install requirements
-COPY requirements.txt .
+# Copy requirements dan install
+COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code
-COPY . .
+# 4. Copy Source Code
+# Pastikan folder ini berisi isi dari folder FastAPI Anda
+COPY --chown=user . $HOME/app
 
-# Tambahkan baris ini: Berikan izin folder /app ke appuser
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
+# 5. Konfigurasi Port
+# Hugging Face MEWAJIBKAN port 7860
+EXPOSE 7860
 
-EXPOSE 8001
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1"]
+# Jalankan uvicorn di port 7860
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1"]
