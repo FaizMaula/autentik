@@ -19,7 +19,6 @@ COPY package*.json ./
 RUN npm install
 RUN npm run build
 
-# Copy Laravel app
 COPY . .
 
 # Install PHP dependencies & clear cache
