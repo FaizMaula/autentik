@@ -6,12 +6,36 @@ from googleapiclient.discovery import build
 import google.generativeai as genai
 import numpy as np
 from google.api_core.exceptions import ResourceExhausted
-from dotenv import load_dotenv
+from pdf2image import convert_from_path
+
 
 
 # Import global model loader
 from model.ocr_loader import processor, model, reader, device
+from model.font_loader import predict_font
 
+def load_image_any(path):
+    ext = os.path.splitext(path)[1].lower()
+
+    # === PDF ===
+    if ext == ".pdf":
+        pages = convert_from_path(path, dpi=300)
+        if not pages:
+            raise ValueError("PDF has no pages")
+
+        # Ambil halaman pertama
+        img_pil = pages[0].convert("RGB")
+        return np.array(img_pil)
+
+    # === IMAGE ===
+    with open(path, "rb") as f:
+        file_bytes = np.frombuffer(f.read(), np.uint8)
+
+    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError("Failed to load image")
+
+    return img
 
 def process_certificate(
     nama,
@@ -23,6 +47,8 @@ def process_certificate(
     nama_kegiatan_inggris,
     berkas,
     image_path
+    # === TEMP FOLDER UNTUK FONT CLASSIFIER ===
+
 ):
 
     # === 0. Parsing tanggal ===
@@ -62,17 +88,11 @@ def process_certificate(
         raise ValueError(f"File not found: {image_path}")
 
     # Aman untuk file besar → tidak OOM saat load
-    with open(image_path, "rb") as f:
-        file_bytes = np.frombuffer(f.read(), np.uint8)
-
-    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-
-    if img is None:
-        raise ValueError("Failed to load image. The file may be corrupted or too large.")
+    img = load_image_any(image_path)
 
     h, w = img.shape[:2]
 
-    MAX_SIZE = 1600
+    MAX_SIZE = 3200
 
     # Resize aman sebelum EasyOCR
     if max(h, w) > MAX_SIZE:
@@ -99,40 +119,6 @@ def process_certificate(
 
     # === 3. OCR EasyOCR (global reader) ===
     results = reader.readtext(cleaned_path)
-
-    # === 4. OCR TroCR (global model) ===
-    # final_texts = []
-
-    # for i, (bbox, text_easy, prob) in enumerate(results):
-    #     if prob < 0.01:
-    #         continue
-
-    #     x_min = int(min([p[0] for p in bbox]))
-    #     y_min = int(min([p[1] for p in bbox]))
-    #     x_max = int(max([p[0] for p in bbox]))
-    #     y_max = int(max([p[1] for p in bbox]))
-
-    #     crop = img[y_min:y_max, x_min:x_max]
-    #     crop_path = f"crop_{i}.jpg"
-    #     cv2.imwrite(crop_path, crop)
-
-    #     # TroCR inference
-    #     image = Image.open(crop_path).convert("RGB")
-    #     pixel_values = processor(
-    #         images=image,
-    #         return_tensors="pt"
-    #     ).pixel_values.to(device)
-
-    #     with torch.no_grad():
-    #         generated_ids = model.generate(pixel_values)
-
-    #     text_trocr = processor.batch_decode(
-    #         generated_ids,
-    #         skip_special_tokens=True
-    #     )[0]
-
-    #     acc = fuzz.ratio(text_easy.lower(), text_trocr.lower())
-    #     final_texts.append((text_easy, text_trocr, prob, acc))
     
     # === 4. OCR TroCR (FILTERED) ===
     final_texts = []
@@ -148,11 +134,65 @@ def process_certificate(
 
     MAX_TROCR_BOXES = 25  # proteksi GPU
     trocr_count = 0
+    
+    font_results = []
+    
+    targets = {
+        "nama": nama,
+        "nama_kegiatan": nama_kegiatan,
+        "penyelenggara": penyelenggara,
+        "tanggal_selesai": date_variations_selesai
+    }
+    FUZZ_THRESHOLD = 70
+
 
     for i, (bbox, text_easy, prob) in enumerate(results):
 
         if prob < 0.01:
             continue
+        # === Crop bbox (dipakai untuk OCR & Font) ===
+        x_min = int(min(p[0] for p in bbox))
+        y_min = int(min(p[1] for p in bbox))
+        x_max = int(max(p[0] for p in bbox))
+        y_max = int(max(p[1] for p in bbox))
+
+        crop = img[y_min:y_max, x_min:x_max]
+        if crop.size == 0:
+            continue
+
+        image = Image.fromarray(crop).convert("RGB")
+
+        image_np = np.array(image)
+        do_font_classification = False
+        for key, val in targets.items():
+            if not val:
+                continue
+            if isinstance(val, list):
+                match_score = max(fuzz.partial_ratio(text_easy.lower(), str(v).lower()) for v in val)
+            else:
+                match_score = fuzz.partial_ratio(text_easy.lower(), str(val).lower())
+
+            if match_score >= FUZZ_THRESHOLD:
+                do_font_classification = True
+                break
+
+        font_pred = predict_font(image_np) if do_font_classification else None
+
+        font_results.append({
+            "text": text_easy,
+            "font_class": font_pred["class"] if font_pred else None,
+            "google_font": font_pred["google_font"][0] if font_pred and font_pred["google_font"] else None,
+            "style": font_pred["google_font"][1] if font_pred and font_pred["google_font"] else None,
+            "font_confidence": float(font_pred["confidence"]) if font_pred else None,
+            "ocr_confidence": float(prob),
+            "bbox": {
+                "x_min": x_min,
+                "y_min": y_min,
+                "x_max": x_max,
+                "y_max": y_max
+            }
+        })
+        
 
         text_lower = text_easy.lower()
 
@@ -164,25 +204,25 @@ def process_certificate(
 
         if not use_trocr:
             # pakai EasyOCR saja
-            final_texts.append((text_easy, text_easy, prob, 100))
+            final_texts.append({
+                "easyocr": text_easy,
+                "trocr": text_easy,
+                "confidence": prob,
+                "accuracy": 100,
+                "font": font_pred
+            })
             continue
 
         # === LIMIT JUMLAH TroCR ===
         if trocr_count >= MAX_TROCR_BOXES:
-            final_texts.append((text_easy, text_easy, prob, 100))
+            final_texts.append({
+                "easyocr": text_easy,
+                "trocr": text_easy,
+                "confidence": prob,
+                "accuracy": 100,
+                "font": font_pred
+            })
             continue
-
-        # === Crop bbox ===
-        x_min = int(min(p[0] for p in bbox))
-        y_min = int(min(p[1] for p in bbox))
-        x_max = int(max(p[0] for p in bbox))
-        y_max = int(max(p[1] for p in bbox))
-
-        crop = img[y_min:y_max, x_min:x_max]
-        if crop.size == 0:
-            continue
-
-        image = Image.fromarray(crop).convert("RGB")
 
         pixel_values = processor(
             images=image,
@@ -199,14 +239,23 @@ def process_certificate(
 
         acc = fuzz.ratio(text_easy.lower(), text_trocr.lower())
 
-        final_texts.append((text_easy, text_trocr, prob, acc))
-        trocr_count += 1
+        final_texts.append({
+            "easyocr": text_easy,
+            "trocr": text_trocr,
+            "confidence": prob,
+            "accuracy": acc,
+            "font": font_pred
+        })
 
+        trocr_count += 1
 
     # Gabungkan hasil TroCR yang valid
     final_output = " ".join([
-        t for (_, t, p, a) in final_texts if p > 0.01
+        item["trocr"]
+        for item in final_texts
+        if item["confidence"] > 0.01
     ])
+
 
     # === 5. Fuzzy match ===
     targets = {
@@ -236,35 +285,53 @@ def process_certificate(
     # === 6. Google Search ===
     from googleapiclient.discovery import build
 
-    # API credentials
-    from googleapiclient.discovery import build
-
     API_KEY = os.getenv("API_KEY")
     SEARCH_ENGINE_ID = os.getenv("SEARCH_ENGINE_ID")
+    
+    from googleapiclient.errors import HttpError
+    import time
+
+    # Simple in-memory cache
+    CACHE = {}
 
     def google_search(nama_kegiatan, penyelenggara, num_results=5):
-        service = build("customsearch", "v1", developerKey=API_KEY)
-
         query = f"{nama_kegiatan} {penyelenggara}"
 
-        res = service.cse().list(
-            q=query,
-            cx=SEARCH_ENGINE_ID,
-            num=num_results,
-            lr="lang_id"
-        ).execute()
+        # Check cache dulu
+        if query in CACHE:
+            return CACHE[query]
 
-        items = res.get("items", [])
-        results = []
+        service = build("customsearch", "v1", developerKey=API_KEY)
 
-        for item in items:
-            results.append({
-                "title": item.get("title"),
-                "link": item.get("link"),
-                "description": item.get("snippet", "-")
-            })
+        try:
+            res = service.cse().list(
+                q=query,
+                cx=SEARCH_ENGINE_ID,
+                num=num_results,
+                lr="lang_id"
+            ).execute()
+            
+            items = res.get("items", [])
+            results = []
 
-        return results
+            for item in items:
+                results.append({
+                    "title": item.get("title"),
+                    "link": item.get("link"),
+                    "description": item.get("snippet", "-")
+                })
+
+            # Simpan ke cache
+            CACHE[query] = results
+            return results
+
+        except HttpError as e:
+            if e.resp.status == 429:
+                print("⚠️ Quota Google Custom Search habis. Tidak bisa melakukan request hari ini.")
+            else:
+                print(f"⚠️ Terjadi HttpError: {e}")
+            return []  # return kosong supaya aplikasi tidak crash
+
 
     S_search = 0
     google_results = google_search(nama_kegiatan, penyelenggara, num_results=5)
@@ -277,7 +344,7 @@ def process_certificate(
         top_result = google_results[0]
 
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        model_gem = genai.GenerativeModel("gemini-2.5-flash-lite")
+        model_gem = genai.GenerativeModel("gemini-2.5-flash")
 
         prompt = f"""
         Anda adalah AI Verifikator Dokumen untuk kegiatan akademik.
@@ -301,11 +368,11 @@ def process_certificate(
         - Baris 3: Ringkasan kegiatan yang sesuai atau catatan jika tidak ditemukan
 
         Contoh output:
-        YA
+        YA Sesuai
         Judul dan deskripsi cocok dengan nama kegiatan dan penyelenggara.
         Kegiatan sesuai ditemukan: [judul kegiatan]
 
-        TIDAK
+        TIDAK Sesuai
         Judul dan deskripsi berbeda dengan kegiatan yang diberikan.
         Tidak ditemukan kegiatan yang sesuai.
         """
@@ -316,7 +383,7 @@ def process_certificate(
             first_line = verifikasi_text.strip().splitlines()[0].lower()
 
             if "ya" in first_line:
-                S_search = 30
+                S_search = 20
             else:
                 S_search = 0
 
@@ -326,18 +393,17 @@ def process_certificate(
                 "Silakan coba kembali beberapa saat lagi."
             )
 
-
-
-
     S_final = (
         (match_scores.get("nama_kegiatan", 0)
         + match_scores.get("nama", 0) + match_scores.get("penyelenggara", 0)
         +match_scores.get("tanggal_selesai", 0)) / 4
-    ) * 0.7 + S_search 
+    ) * 0.8 + S_search 
     return {
         "match_scores": match_scores,
         "final_score": S_final,
         "verifikasi_ai": verifikasi_text,
         "ocr_text": final_output,
+        "ocr_details": final_texts,
+        "font_results": font_results,   
         "google_results": google_results
     } 

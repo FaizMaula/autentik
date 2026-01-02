@@ -1,0 +1,1 @@
+﻿# Autentik (Laravel)\n\nStandalone export of the Laravel monolith.\n\nQuick start (dev):\n- copy .env.example to .env; adjust APP_URL\n- composer install; php artisan key:generate\n- npm install; npm run dev\n\nBuild:\n- npm run build\n\nMaintenance:\n- php artisan cache:clear; php artisan config:clear; php artisan view:clear; php artisan optimize\n
