@@ -31,9 +31,12 @@ RUN rm -f public/hot && rm -rf public/build
 RUN npm install && npm run build
 
 # 7. FIX PERMISSIONS & DIRECTORY
+# Tambahkan /var/run dan berikan izin akses
 RUN mkdir -p /var/www/storage/app/public/certificates \
     && mkdir -p /var/www/bootstrap/cache \
-    && mkdir -p /var/log/supervisor
+    && mkdir -p /var/log/supervisor \
+    && mkdir -p /var/run \
+    && chmod 777 /var/run
 
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
