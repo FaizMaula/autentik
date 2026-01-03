@@ -58,20 +58,17 @@ class CertificateController extends Controller
         $validated = $request->validate($rules);
 
         if ($isInternal) {
-            // internal verification tetap sama
             $verificationResult = $this->verifyInternalCertificate(
                 $request->nim,
                 $request->nama,
                 $request->nama_kegiatan,
                 $request->penyelenggara
             );
-
-            $certificate = Certificate::create([
-                'user_id' => Auth::id(),
+        
+            // Dummy object (TIDAK disimpan ke DB)
+            $certificate = new Certificate([
                 'certificate_type' => 'internal',
                 'nim' => $request->nim,
-                'internal_verified' => $verificationResult['verified'],
-                'internal_verification_notes' => $verificationResult['notes'],
                 'nama' => $request->nama,
                 'tahun_akademik' => $request->tahun_akademik,
                 'penyelenggara' => $request->penyelenggara,
@@ -79,11 +76,12 @@ class CertificateController extends Controller
                 'tanggal_selesai' => $request->tanggal_selesai,
                 'nama_kegiatan' => $request->nama_kegiatan,
                 'nama_kegiatan_inggris' => $request->nama_kegiatan_inggris,
-                'berkas' => null,
                 'final_score' => $verificationResult['verified'] ? 100 : 0,
                 'is_verified' => $verificationResult['verified'],
+                'internal_verified' => $verificationResult['verified'],
+                'internal_verification_notes' => $verificationResult['notes'],
             ]);
-
+        
             return view('results', [
                 'certificate' => $certificate,
                 'certificate_type' => 'internal',
