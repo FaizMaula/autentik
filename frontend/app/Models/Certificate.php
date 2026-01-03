@@ -47,4 +47,36 @@ class Certificate extends Model
     {
         return $this->hasMany(CertificateAnalysisResult::class);
     }
+    
+    public function getOverallStatusAttribute(): string
+    {
+        // For internal certificates: use internal_verified
+        if ($this->certificate_type === 'internal') {
+            return $this->internal_verified ? 'verified' : 'not_verified';
+        }
+
+        // For external certificates: use final_score
+        if ($this->final_score >= 75) {
+            return 'verified';
+        } elseif ($this->final_score >= 50) {
+            return 'suspicious';
+        }
+
+        return 'not_verified';
+    }
+
+    /**
+     * Get the human-readable status text.
+     */
+    public function getStatusTextAttribute(): string
+    {
+        $status = $this->overall_status;
+        
+        return match ($status) {
+            'verified' => __('results.verified'),
+            'suspicious' => __('results.suspicious'),
+            default => __('results.notVerified'),
+        };
+    }
 }
+
