@@ -1,9 +1,9 @@
 FROM php:8.2-fpm
 
-# 1. Install system dependencies & PHP extensions
+# 1. Install system dependencies & Supervisor
 RUN apt-get update && apt-get install -y \
     git unzip libpng-dev libonig-dev libxml2-dev libzip-dev nginx curl \
-    nodejs npm \
+    nodejs npm supervisor \
     && docker-php-ext-install pdo_mysql mbstring bcmath gd zip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -30,19 +30,20 @@ RUN composer install --no-dev --optimize-autoloader \
 RUN rm -f public/hot && rm -rf public/build
 RUN npm install && npm run build
 
-# 7. FIX PERMISSIONS & DIRECTORY (Solusi Error "Unable to create directory")
-# Membuat folder certificates secara eksplisit
+# 7. FIX PERMISSIONS & DIRECTORY
 RUN mkdir -p /var/www/storage/app/public/certificates \
-    && mkdir -p /var/www/bootstrap/cache
+    && mkdir -p /var/www/bootstrap/cache \
+    && mkdir -p /var/log/supervisor
 
-# Mengatur kepemilikan dan izin akses agar bisa ditulis oleh PHP (www-data)
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# 8. Nginx Configuration
+# 8. Nginx & Supervisor Configuration
 COPY ./docker/nginx.conf /etc/nginx/sites-available/default
+COPY ./docker/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 8080
 
-# 9. Start Services
-CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
+# 9. Start Application with Supervisor
+# Menjalankan storage:link sebelum memulai supervisor
+CMD ["sh", "-c", "php artisan storage:link && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
