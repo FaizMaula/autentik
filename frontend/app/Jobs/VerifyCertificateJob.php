@@ -19,6 +19,15 @@ class VerifyCertificateJob implements ShouldQueue
 
         $absolutePath = storage_path('app/public/' . $certificate->berkas);
 
+        if (!file_exists($absolutePath)) {
+            throw new \Exception("File tidak ditemukan di kontainer Worker: " . $absolutePath);
+        }
+    
+        $apiUrl = config('services.fastapi.url');
+        if (!$apiUrl) {
+            throw new \Exception("Konfigurasi FASTAPI_URL tidak ditemukan di config/services.php");
+        }
+
         $response = Http::timeout(300)
             ->asMultipart()
             ->attach(
@@ -37,7 +46,7 @@ class VerifyCertificateJob implements ShouldQueue
             ]);
 
         if (!$response->ok()) {
-            return;
+            throw new \Exception("Gagal menghubungi FastAPI: " . $response->body());
         }
 
         $result = $response->json();
