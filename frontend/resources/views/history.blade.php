@@ -5,17 +5,16 @@
 
   <div class="flex-grow py-8">
     <div class="container mx-auto px-6 relative z-10">
-      <!-- Breadcrumb -->
-      <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
-        <a href="/" class="hover:text-[#B62A2D] transition-colors">
-          <i data-lucide="home" style="width:18px;height:18px"></i>
-        </a>
-        <span>/</span>
-        <span class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ __('history.breadcrumb') }}</span>
-      </div>
-
       <!-- Header -->
       <div class="max-w-6xl mx-auto mb-8">
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+          <a href="/" class="hover:text-[#B62A2D] transition-colors">
+            <i data-lucide="home" style="width:18px;height:18px"></i>
+          </a>
+          <span>/</span>
+          <span class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ __('history.breadcrumb') }}</span>
+        </div>
         <h1 class="text-4xl md:text-5xl font-bold text-[#222223] dark:text-[#FEFEFE] mb-4">{{ __('history.title') }}</h1>
         <p class="text-lg text-gray-600 dark:text-gray-400">{{ __('history.subtitle') }}</p>
       </div>
