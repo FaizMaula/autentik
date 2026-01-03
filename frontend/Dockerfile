@@ -46,7 +46,9 @@ RUN mkdir -p \
 
 # Permissions (simple & safe)
 RUN chown -R root:root /var/www \
-    && chmod -R 755 /var/www
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
 
 # Configs
 COPY ./docker/nginx.conf /etc/nginx/sites-available/default
