@@ -4,8 +4,8 @@
 <section class="relative min-h-screen flex flex-col pt-20 pb-0 overflow-hidden">
   @include('components.animated-background', ['showWatermark' => true])
 
-  <div class="grow py-8">
-    <div class="container mx-auto px-6 relative z-10">
+  <div class="grow py-8 px-3 md:px-4">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
       <!-- Header -->
       <div class="mb-8">
         <a href="{{ route('admin.events.index') }}" class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-[#B62A2D] transition-colors mb-4">
