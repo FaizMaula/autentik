@@ -1,52 +1,57 @@
 FROM php:8.2-fpm
 
-# 1. Install system dependencies & Supervisor
+# Install system deps
 RUN apt-get update && apt-get install -y \
-    git unzip libpng-dev libonig-dev libxml2-dev libzip-dev nginx curl \
-    nodejs npm supervisor \
+    git unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    nginx curl supervisor \
     && docker-php-ext-install pdo_mysql mbstring bcmath gd zip \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Configure PHP for Large Uploads (Solusi Error 413)
+# Node (modern)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# PHP upload limits
 RUN echo "upload_max_filesize=20M" > /usr/local/etc/php/conf.d/uploads.ini \
     && echo "post_max_size=20M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/uploads.ini
 
-# 3. Setup Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
-
-# 4. Copy Source Code
 COPY . .
 
-# 5. PHP Dependencies & Optimization
-RUN composer install --no-dev --optimize-autoloader \
-    && php artisan config:clear \
-    && php artisan route:clear \
-    && php artisan view:clear
+# PHP deps
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-interaction \
+    && php artisan config:clear || true \
+    && php artisan route:clear || true \
+    && php artisan view:clear || true
 
-# 6. Build Frontend Assets (Solusi Error Vite/localhost)
-RUN rm -f public/hot && rm -rf public/build
-RUN npm install && npm run build
+# Frontend build
+RUN rm -f public/hot && rm -rf public/build \
+    && npm install \
+    && npm run build
 
-# 7. FIX PERMISSIONS & DIRECTORY
-# Tambahkan /var/run dan berikan izin akses
-RUN mkdir -p /var/www/storage/app/public/certificates \
-    && mkdir -p /var/www/bootstrap/cache \
-    && mkdir -p /var/log/supervisor \
-    && mkdir -p /var/run \
-    && chmod 777 /var/run
+# Directories
+RUN mkdir -p \
+    /var/www/storage/app/public/certificates \
+    /var/www/bootstrap/cache \
+    /var/log/supervisor \
+    /var/run
 
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Permissions (simple & safe)
+RUN chown -R root:root /var/www \
+    && chmod -R 755 /var/www
 
-# 8. Nginx & Supervisor Configuration
+# Configs
 COPY ./docker/nginx.conf /etc/nginx/sites-available/default
 COPY ./docker/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 8080
 
-# 9. Start Application with Supervisor
-# Menjalankan storage:link sebelum memulai supervisor
-CMD ["sh", "-c", "php artisan storage:link && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+CMD ["sh", "-c", "php artisan storage:link && supervisord -n"]
