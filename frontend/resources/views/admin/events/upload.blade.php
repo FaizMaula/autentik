@@ -4,8 +4,8 @@
 <section class="relative min-h-screen flex flex-col pt-20 pb-0 overflow-hidden">
   @include('components.animated-background', ['showWatermark' => true])
 
-  <div class="flex-grow py-8">
-    <div class="container mx-auto px-6 relative z-10">
+  <div class="flex-grow py-8  px-3 md:px-4">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
       <div class="max-w-3xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
