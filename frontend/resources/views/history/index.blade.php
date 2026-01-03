@@ -4,9 +4,9 @@
 <div class="min-h-screen pt-24 pb-0 relative overflow-hidden">
   @include('components.animated-background', ['showWatermark' => false])
   
-  <div class="container mx-auto px-6 relative z-10">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
     <!-- Header -->
-    <div class="max-w-6xl mx-auto mb-8">
+    <div class="mb-8">
       <!-- Breadcrumb -->
       <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 mb-4">
         <a href="/" class="hover:text-[#B62A2D] transition-colors">
@@ -21,7 +21,6 @@
 
     @if($histories->isEmpty())
       <!-- Empty State -->
-      <div class="max-w-6xl mx-auto">
         <div class="glass-card-strong rounded-2xl py-20 px-12 md:py-24 md:px-16 text-center animate-fade-in">
           <div class="flex justify-center mb-10">
             <div class="glass-icon p-6">
@@ -35,11 +34,10 @@
             <i data-lucide="file-check" style="width:20px;height:20px"></i>
             {{ __('history.startVerifying') }}
           </a>
-        </div>
       </div>
     @else
       <!-- History List -->
-      <div class="max-w-6xl mx-auto space-y-6">
+      <div class="space-y-6">
         @foreach($histories as $history)
           <div class="glass-card hover:bg-white/85 dark:hover:bg-[#333334]/85 rounded-2xl transition-all duration-300 overflow-hidden animate-fade-in">
             <div class="p-6 md:p-8">
