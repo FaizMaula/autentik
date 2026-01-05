@@ -7,25 +7,46 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Certificate;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 class VerifyCertificateJob implements ShouldQueue
 {
     use Dispatchable, Queueable;
+
+    public $tries = 3;
+    public $backoff = [15, 30, 60]; // detik
 
     public function __construct(public int $certificateId) {}
 
     public function handle()
     {
-        $certificate = Certificate::findOrFail($this->certificateId);
+        $certificate = Certificate::find($this->certificateId);
+
+        // Certificate dihapus → stop job
+        if (!$certificate) {
+            Log::warning('Certificate not found', [
+                'certificate_id' => $this->certificateId
+            ]);
+            return;
+        }
 
         $absolutePath = storage_path('app/public/' . $certificate->berkas);
 
+        // ⚠️ Error sementara → retry otomatis
         if (!file_exists($absolutePath)) {
-            throw new \Exception("File tidak ditemukan di kontainer Worker: " . $absolutePath);
+            Log::warning('Certificate file missing, retrying', [
+                'path' => $absolutePath,
+                'attempt' => $this->attempts()
+            ]);
+
+            $this->release(30); // retry 30 detik lagi
+            return;
         }
-    
+
         $apiUrl = config('services.fastapi.url');
         if (!$apiUrl) {
-            throw new \Exception("Konfigurasi FASTAPI_URL tidak ditemukan di config/services.php");
+            // ❌ Bug konfigurasi → FAIL keras
+            throw new \RuntimeException('FASTAPI_URL tidak dikonfigurasi');
         }
 
         $response = Http::timeout(300)
@@ -35,7 +56,7 @@ class VerifyCertificateJob implements ShouldQueue
                 file_get_contents($absolutePath),
                 basename($absolutePath)
             )
-            ->post(config('services.fastapi.url') . '/certificate/verify', [
+            ->post($apiUrl . '/certificate/verify', [
                 'nama' => $certificate->nama,
                 'tahun_akademik' => $certificate->tahun_akademik,
                 'penyelenggara' => $certificate->penyelenggara,
@@ -45,12 +66,20 @@ class VerifyCertificateJob implements ShouldQueue
                 'nama_kegiatan_inggris' => $certificate->nama_kegiatan_inggris,
             ]);
 
+        // ⚠️ FastAPI down / error → retry
         if (!$response->ok()) {
-            throw new \Exception("Gagal menghubungi FastAPI: " . $response->body());
+            Log::warning('FastAPI error, retrying', [
+                'status' => $response->status(),
+                'attempt' => $this->attempts()
+            ]);
+
+            $this->release(60);
+            return;
         }
 
         $result = $response->json();
 
+        // === SIMPAN HASIL ===
         $certificate->update([
             'final_score' => $result['final_score'] ?? 0,
             'is_verified' => ($result['final_score'] ?? 0) >= 75,
@@ -71,4 +100,3 @@ class VerifyCertificateJob implements ShouldQueue
         ]);
     }
 }
-
