@@ -101,7 +101,7 @@ class CertificateController extends Controller
 
         // EXTERNAL CERTIFICATE - DISPATCH JOB
         $file = $request->file('berkas');
-        $path = $file->store('certificates', 'public');
+        $path = $file->store('certificates', 'r2');
 
         $certificate = Certificate::create([
             'user_id' => Auth::id(),
