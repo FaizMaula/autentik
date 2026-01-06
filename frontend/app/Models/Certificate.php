@@ -52,10 +52,19 @@ class Certificate extends Model
     {
         // For internal certificates: use internal_verified
         if ($this->certificate_type === 'internal') {
+            // Check if still processing (internal_verified is null)
+            if (is_null($this->internal_verified)) {
+                return 'pending';
+            }
             return $this->internal_verified ? 'verified' : 'not_verified';
         }
 
-        // For external certificates: use final_score
+        // For external certificates: check if still processing (final_score is null)
+        if (is_null($this->final_score)) {
+            return 'pending';
+        }
+
+        // Use final_score to determine status
         if ($this->final_score >= 75) {
             return 'verified';
         } elseif ($this->final_score >= 50) {
@@ -73,6 +82,7 @@ class Certificate extends Model
         $status = $this->overall_status;
         
         return match ($status) {
+            'pending' => __('results.pending'),
             'verified' => __('results.verified'),
             'suspicious' => __('results.suspicious'),
             default => __('results.notVerified'),

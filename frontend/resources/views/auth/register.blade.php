@@ -50,7 +50,28 @@
               </div>
             </div>
 
-            <!-- Password Field (Right Top) -->
+            <!-- Email Field (Right Top) -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('auth.email') }}</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 fill-gray-700 dark:fill-gray-400" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                </div>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value="{{ old('email') }}"
+                  class="w-full pl-10 pr-4 py-3 glass-input rounded-lg focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all duration-200 @error('email') border-red-500 @enderror" 
+                  placeholder="{{ __('auth.emailPlaceholder') }}"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Password Field (Left Bottom) -->
             <div>
               <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('auth.password') }}</label>
               <div class="relative">
@@ -81,27 +102,6 @@
                 </button>
               </div>
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('auth.passwordHint') }}</p>
-            </div>
-
-            <!-- Email Field (Left Bottom) -->
-            <div>
-              <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('auth.email') }}</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="w-5 h-5 fill-gray-700 dark:fill-gray-400" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                  </svg>
-                </div>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
-                  value="{{ old('email') }}"
-                  class="w-full pl-10 pr-4 py-3 glass-input rounded-lg focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all duration-200 @error('email') border-red-500 @enderror" 
-                  placeholder="{{ __('auth.emailPlaceholder') }}"
-                  required
-                />
-              </div>
             </div>
 
             <!-- Confirm Password Field (Right Bottom) -->

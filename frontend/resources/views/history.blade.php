@@ -40,7 +40,7 @@
         <!-- History List -->
         <div class="max-w-6xl mx-auto space-y-6">
           @foreach($histories as $history)
-            <div class="glass-card-strong rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+            <div class="glass-card-strong rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 {{ $history->overall_status === 'pending' ? 'pending-card' : '' }}">
               <div class="p-6 md:p-8">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                   <!-- Left Side: Content -->
@@ -48,13 +48,21 @@
                     <div class="flex items-start gap-4 mb-4">
                       <!-- Status Icon -->
                       <div class="flex-shrink-0 mt-1">
-                        @if($history->overall_status === 'verified')
+                        @if($history->overall_status === 'pending')
+                          <div class="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+                            <i data-lucide="loader" class="text-orange-600 dark:text-orange-400 animate-spin" style="width:32px;height:32px"></i>
+                          </div>
+                        @elseif($history->overall_status === 'verified')
                           <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
                             <i data-lucide="check-circle" class="text-green-600 dark:text-green-400" style="width:32px;height:32px"></i>
                           </div>
                         @elseif($history->overall_status === 'not_verified')
                           <div class="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl">
                             <i data-lucide="x-circle" class="text-red-600 dark:text-red-400" style="width:32px;height:32px"></i>
+                          </div>
+                        @elseif($history->overall_status === 'suspicious')
+                          <div class="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
+                            <i data-lucide="alert-triangle" class="text-yellow-600 dark:text-yellow-400" style="width:32px;height:32px"></i>
                           </div>
                         @else
                           <div class="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
@@ -92,9 +100,19 @@
 
                         <!-- Status Badge and Confidence -->
                         <div class="flex flex-wrap items-center gap-3">
-                          @if($history->is_verified)
+                          @if($history->overall_status === 'pending')
+                              <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 rounded-full text-sm font-semibold flex items-center gap-2">
+                                  <i data-lucide="loader" class="animate-spin" style="width:14px;height:14px"></i>
+                                  {{ __('results.pending') }}
+                              </span>
+                          @elseif($history->overall_status === 'verified')
                               <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full text-sm font-semibold">
                                   {{ __('results.verified') }}
+                              </span>
+                          @elseif($history->overall_status === 'suspicious')
+                              <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded-full text-sm font-semibold flex items-center gap-2">
+                                  <i data-lucide="alert-triangle" style="width:14px;height:14px"></i>
+                                  {{ __('results.suspicious') }}
                               </span>
                           @else
                               <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-full text-sm font-semibold">
@@ -102,16 +120,24 @@
                               </span>
                           @endif
 
-                          @if($history->confidence)
+                          @if($history->overall_status === 'pending')
+                            <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-sm">
+                              {{ __('results.pendingDesc') }}
+                            </span>
+                          @elseif($history->final_score)
                             <span class="px-3 py-1 bg-[#B62A2D]/10 dark:bg-[#B62A2D]/20 text-[#B62A2D] dark:text-[#d5575e] rounded-full text-sm font-semibold">
-                              {{ __('history.confidence') }}: {{ $history->final_score }}%
+                              {{ __('history.confidence') }}: {{ round($history->final_score) }}%
                             </span>
                           @endif
                         </div>
 
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
                           <i data-lucide="clock" style="width:14px;height:14px" class="inline"></i>
-                          {{ __('history.verifiedAt') }} {{ $history->created_at->format('d M Y, H:i') }}
+                          @if($history->overall_status === 'pending')
+                            {{ __('history.submittedAt') ?? 'Diajukan pada' }} {{ $history->created_at->format('d M Y, H:i') }}
+                          @else
+                            {{ __('history.verifiedAt') }} {{ $history->created_at->format('d M Y, H:i') }}
+                          @endif
                         </p>
                       </div>
                     </div>
@@ -119,10 +145,17 @@
 
                   <!-- Right Side: Action Button -->
                   <div class="flex-shrink-0">
-                    <a href="{{ route('result.show', $history->id) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#B62A2D] text-white rounded-lg font-semibold hover:bg-[#9a2426] dark:hover:bg-[#d5575e] transform hover:scale-105 transition-all duration-300 shadow-md">
-                      <i data-lucide="eye" style="width:18px;height:18px"></i>
-                      {{ __('history.viewDetail') }}
-                    </a>
+                    @if($history->overall_status === 'pending')
+                      <button disabled class="inline-flex items-center gap-2 px-6 py-3 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg font-semibold cursor-not-allowed opacity-70">
+                        <i data-lucide="loader" class="animate-spin" style="width:18px;height:18px"></i>
+                        {{ __('history.processing') ?? 'Memproses...' }}
+                      </button>
+                    @else
+                      <a href="{{ route('result.show', $history->id) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#B62A2D] text-white rounded-lg font-semibold hover:bg-[#9a2426] dark:hover:bg-[#d5575e] transform hover:scale-105 transition-all duration-300 shadow-md">
+                        <i data-lucide="eye" style="width:18px;height:18px"></i>
+                        {{ __('history.viewDetail') }}
+                      </a>
+                    @endif
                   </div>
                 </div>
               </div>
@@ -137,6 +170,63 @@
   
   @include('partials.footer')
 </section>
+
+<style>
+/* Shimmer effect for pending cards */
+.pending-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.pending-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(251, 146, 60, 0.08),
+    rgba(251, 146, 60, 0.15),
+    rgba(251, 146, 60, 0.08),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dark .pending-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(251, 146, 60, 0.05),
+    rgba(251, 146, 60, 0.1),
+    rgba(251, 146, 60, 0.05),
+    transparent
+  );
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Pending card border glow */
+.pending-card {
+  border: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+.dark .pending-card {
+  border: 1px solid rgba(251, 146, 60, 0.2);
+}
+</style>
 
 @section('hide_footer', true)
 @endsection
