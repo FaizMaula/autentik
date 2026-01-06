@@ -59,8 +59,8 @@ class Certificate extends Model
             return $this->internal_verified ? 'verified' : 'not_verified';
         }
 
-        // For external certificates: check if still processing (final_score is null)
-        if (is_null($this->final_score)) {
+        // For external certificates: check if still processing (final_score is -1)
+        if ($this->final_score < 0) {
             return 'pending';
         }
 

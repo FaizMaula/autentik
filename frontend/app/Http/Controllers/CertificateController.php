@@ -117,7 +117,7 @@ class CertificateController extends Controller
             'nama_kegiatan' => $request->nama_kegiatan,
             'nama_kegiatan_inggris' => $request->nama_kegiatan_inggris,
             'berkas' => $path,
-            'final_score' => 0,
+            'final_score' => -1, // Pending indicator
             'is_verified' => false,
         ]);
 
