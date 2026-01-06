@@ -38,9 +38,9 @@
         </div>
       @else
         <!-- History List -->
-        <div class="max-w-6xl mx-auto space-y-6">
+        <div class="max-w-6xl mx-auto space-y-6" id="historyList">
           @foreach($histories as $history)
-            <div class="glass-card-strong rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 {{ $history->overall_status === 'pending' ? 'pending-card' : '' }}">
+            <div class="glass-card-strong rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 history-card {{ $history->overall_status === 'pending' ? 'pending-card' : '' }}" data-id="{{ $history->id }}" data-status="{{ $history->overall_status }}">
               <div class="p-6 md:p-8">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                   <!-- Left Side: Content -->
@@ -49,8 +49,8 @@
                       <!-- Status Icon -->
                       <div class="flex-shrink-0 mt-1">
                         @if($history->overall_status === 'pending')
-                          <div class="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
-                            <i data-lucide="loader" class="text-orange-600 dark:text-orange-400 animate-spin" style="width:32px;height:32px"></i>
+                          <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                            <i data-lucide="loader" class="text-blue-600 dark:text-blue-400 animate-spin" style="width:32px;height:32px"></i>
                           </div>
                         @elseif($history->overall_status === 'verified')
                           <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
@@ -101,7 +101,7 @@
                         <!-- Status Badge and Confidence -->
                         <div class="flex flex-wrap items-center gap-3">
                           @if($history->overall_status === 'pending')
-                              <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 rounded-full text-sm font-semibold flex items-center gap-2">
+                              <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-sm font-semibold flex items-center gap-2">
                                   <i data-lucide="loader" class="animate-spin" style="width:14px;height:14px"></i>
                                   {{ __('results.pending') }}
                               </span>
@@ -121,11 +121,11 @@
                           @endif
 
                           @if($history->overall_status === 'pending')
-                            <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-sm">
+                            <span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm">
                               {{ __('results.pendingDesc') }}
                             </span>
-                          @elseif($history->final_score)
-                            <span class="px-3 py-1 bg-[#B62A2D]/10 dark:bg-[#B62A2D]/20 text-[#B62A2D] dark:text-[#d5575e] rounded-full text-sm font-semibold">
+                          @elseif($history->final_score && $history->final_score >= 0)
+                            <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full text-sm font-semibold">
                               {{ __('history.confidence') }}: {{ round($history->final_score) }}%
                             </span>
                           @endif
@@ -146,7 +146,7 @@
                   <!-- Right Side: Action Button -->
                   <div class="flex-shrink-0">
                     @if($history->overall_status === 'pending')
-                      <button disabled class="inline-flex items-center gap-2 px-6 py-3 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg font-semibold cursor-not-allowed opacity-70">
+                      <button disabled class="inline-flex items-center gap-2 px-6 py-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg font-semibold cursor-not-allowed">
                         <i data-lucide="loader" class="animate-spin" style="width:18px;height:18px"></i>
                         {{ __('history.processing') ?? 'Memproses...' }}
                       </button>
@@ -188,9 +188,9 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(251, 146, 60, 0.08),
-    rgba(251, 146, 60, 0.15),
-    rgba(251, 146, 60, 0.08),
+    rgba(59, 130, 246, 0.08),
+    rgba(59, 130, 246, 0.15),
+    rgba(59, 130, 246, 0.08),
     transparent
   );
   animation: shimmer 2s infinite;
@@ -202,9 +202,9 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(251, 146, 60, 0.05),
-    rgba(251, 146, 60, 0.1),
-    rgba(251, 146, 60, 0.05),
+    rgba(59, 130, 246, 0.05),
+    rgba(59, 130, 246, 0.1),
+    rgba(59, 130, 246, 0.05),
     transparent
   );
 }
@@ -220,13 +220,66 @@
 
 /* Pending card border glow */
 .pending-card {
-  border: 1px solid rgba(251, 146, 60, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .dark .pending-card {
-  border: 1px solid rgba(251, 146, 60, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if there are any pending cards
+  const pendingCards = document.querySelectorAll('.history-card[data-status="pending"]');
+  
+  if (pendingCards.length > 0) {
+    // Start polling every 10 seconds
+    const pollingInterval = setInterval(async function() {
+      try {
+        // Get all pending certificate IDs
+        const pendingIds = Array.from(pendingCards).map(card => card.dataset.id);
+        
+        // Check status via API
+        const response = await fetch('/api/certificates/check-status', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ ids: pendingIds })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Check if any status has changed from pending
+          let shouldRefresh = false;
+          for (const id of pendingIds) {
+            if (data.statuses && data.statuses[id] && data.statuses[id] !== 'pending') {
+              shouldRefresh = true;
+              break;
+            }
+          }
+          
+          if (shouldRefresh) {
+            // Stop polling and refresh the page
+            clearInterval(pollingInterval);
+            window.location.reload();
+          }
+        }
+      } catch (error) {
+        console.log('Polling check failed:', error);
+      }
+    }, 10000); // Poll every 10 seconds
+    
+    // Stop polling after 5 minutes to prevent infinite polling
+    setTimeout(function() {
+      clearInterval(pollingInterval);
+    }, 300000);
+  }
+});
+</script>
 
 @section('hide_footer', true)
 @endsection

@@ -290,4 +290,31 @@ class CertificateController extends Controller
             'participant_data' => $participantData
         ];
     }
+
+    /**
+     * Check status of certificates (used by AJAX polling)
+     */
+    public function checkStatus(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer'
+        ]);
+
+        $ids = $request->input('ids');
+        
+        // Get certificates that belong to the authenticated user
+        $certificates = Certificate::whereIn('id', $ids)
+            ->where('user_id', Auth::id())
+            ->get(['id', 'final_score', 'certificate_type', 'internal_verified']);
+
+        $statuses = [];
+        foreach ($certificates as $cert) {
+            $statuses[$cert->id] = $cert->overall_status;
+        }
+
+        return response()->json([
+            'statuses' => $statuses
+        ]);
+    }
 }
