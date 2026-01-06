@@ -49,7 +49,7 @@
     "auth.passwordMismatch": "Password confirmation does not match",
 
     "hero.trustBadge": "Trusted Verification System",
-    "hero.title": "Verify Certificate Authenticity in Seconds.",
+    "hero.title": "Verify Certificate Authenticity in Short Time.",
     "hero.subtitle": "Perform a preliminary check on your diplomas, training certificates, or professional credentials. Our platform helps you get indicative results quickly and securely.",
     "hero.ctaPrimary": "Check Now",
     "hero.ctaSecondary": "Learn how it works",
@@ -67,7 +67,7 @@
     "about.title": "Why Us?",
     "about.subtitle": "Speed & Trust",
     "about.card1Title": "Instant Results.",
-    "about.card1Desc": "Get preliminary verification results of your certificate in seconds as a reference.",
+    "about.card1Desc": "Get preliminary verification results of your certificate in short time as a reference.",
     "about.card2Title": "Safe & Encrypted",
     "about.card2Desc": "Using the latest encryption standards. Your data privacy and security are our top priorities.",
     "about.card3Title": "Technology-Based",
