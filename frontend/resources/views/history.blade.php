@@ -125,9 +125,20 @@
                               {{ __('results.pendingDesc') }}
                             </span>
                           @elseif($history->final_score && $history->final_score >= 0)
-                            <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full text-sm font-semibold">
-                              {{ __('history.confidence') }}: {{ round($history->final_score) }}%
-                            </span>
+                            {{-- Confidence badge color matches status --}}
+                            @if($history->overall_status === 'verified')
+                              <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full text-sm font-semibold">
+                                {{ __('history.confidence') }}: {{ round($history->final_score) }}%
+                              </span>
+                            @elseif($history->overall_status === 'suspicious')
+                              <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded-full text-sm font-semibold">
+                                {{ __('history.confidence') }}: {{ round($history->final_score) }}%
+                              </span>
+                            @else
+                              <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-full text-sm font-semibold">
+                                {{ __('history.confidence') }}: {{ round($history->final_score) }}%
+                              </span>
+                            @endif
                           @endif
                         </div>
 
