@@ -33,11 +33,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # -----------------------------------
-# Copy composer files first for caching
+# Copy composer files first (caching)
 # -----------------------------------
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
+# Install PHP dependencies first (before full copy)
 RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
 # -----------------------------------
@@ -58,21 +58,21 @@ RUN php artisan config:clear || true \
     && php artisan view:clear || true
 
 # -----------------------------------
-# Frontend build
+# Build frontend assets
 # -----------------------------------
 RUN rm -f public/hot && rm -rf public/build \
     && npm install \
     && npm run build
 
 # -----------------------------------
-# Directories & permissions
+# Create storage & cache directories
 # -----------------------------------
 RUN mkdir -p storage/app/public/certificates bootstrap/cache /var/log/supervisor /var/run \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
 # -----------------------------------
-# Configs
+# Copy Nginx & Supervisor configs
 # -----------------------------------
 COPY ./docker/nginx.conf /etc/nginx/sites-available/default
 COPY ./docker/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
