@@ -2,40 +2,53 @@
 
 namespace App\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Certificate;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
+
 class VerifyCertificateJob implements ShouldQueue
 {
     use Dispatchable, Queueable;
+
+    public $tries = 5;
+    public $backoff = [30, 60, 120];
+    public $timeout = 360;
 
     public function __construct(public int $certificateId) {}
 
     public function handle()
     {
-        $certificate = Certificate::findOrFail($this->certificateId);
+        $certificate = Certificate::find($this->certificateId);
 
-        $absolutePath = storage_path('app/public/' . $certificate->berkas);
-
-        if (!file_exists($absolutePath)) {
-            throw new \Exception("File tidak ditemukan di kontainer Worker: " . $absolutePath);
+        if (!$certificate) {
+            Log::warning('Certificate not found, job stopped', [
+                'certificate_id' => $this->certificateId
+            ]);
+            return;
         }
-    
+
+        // ✅ Ambil file dari R2
+        if (!Storage::disk('r2')->exists($certificate->berkas)) {
+            throw new \RuntimeException('File not found in R2: ' . $certificate->berkas);
+        }
+
+        $fileContents = Storage::disk('r2')->get($certificate->berkas);
+        $filename = basename($certificate->berkas);
+
         $apiUrl = config('services.fastapi.url');
         if (!$apiUrl) {
-            throw new \Exception("Konfigurasi FASTAPI_URL tidak ditemukan di config/services.php");
+            throw new \RuntimeException('FASTAPI_URL not configured');
         }
 
         $response = Http::timeout(300)
             ->asMultipart()
-            ->attach(
-                'berkas',
-                file_get_contents($absolutePath),
-                basename($absolutePath)
-            )
-            ->post(config('services.fastapi.url') . '/certificate/verify', [
+            ->attach('berkas', $fileContents, $filename)
+            ->post($apiUrl . '/certificate/verify', [
                 'nama' => $certificate->nama,
                 'tahun_akademik' => $certificate->tahun_akademik,
                 'penyelenggara' => $certificate->penyelenggara,
@@ -46,7 +59,9 @@ class VerifyCertificateJob implements ShouldQueue
             ]);
 
         if (!$response->ok()) {
-            throw new \Exception("Gagal menghubungi FastAPI: " . $response->body());
+            throw new \RuntimeException(
+                'FastAPI error: ' . $response->status() . ' - ' . $response->body()
+            );
         }
 
         $result = $response->json();
@@ -70,5 +85,12 @@ class VerifyCertificateJob implements ShouldQueue
             'analysis_version' => 'v1.0',
         ]);
     }
-}
 
+    public function failed(Throwable $e)
+    {
+        Log::error('VerifyCertificateJob permanently failed', [
+            'certificate_id' => $this->certificateId,
+            'error' => $e->getMessage(),
+        ]);
+    }
+}
