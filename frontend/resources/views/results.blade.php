@@ -518,9 +518,21 @@
                     <div class="space-y-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                     @foreach ($ocr_details as $index => $item)
                         {{-- Filter: Skip if accuracy low or no font data --}}
-                        @if (empty($item['font']) || ($item['accuracy'] ?? 0) < 0.6)
+                        @php
+                            $font = $item['font'] ?? null;
+                            $fontConfidence = ($font['confidence'] ?? 0);
+                            $fontClass = $font['class'] ?? 'UNKNOWN';
+                        @endphp
+                        
+                        @if (
+                            empty($font) ||
+                            ($item['accuracy'] ?? 0) < 0.6 ||
+                            $fontConfidence <= 0 ||
+                            $fontClass === 'UNKNOWN'
+                        )
                             @continue
                         @endif
+
 
                         <div class="bg-gray-50 dark:bg-[#333334] rounded-xl p-5 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
                             
