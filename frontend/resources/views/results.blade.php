@@ -585,7 +585,7 @@
                                 <div class="bg-gray-100 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
                                     <p class="text-xs font-bold text-gray-500 uppercase mb-3 tracking-wide">Font Analysis</p>
                                     
-                                    {{-- Reference Font (Database) --}}
+                                    <!-- {{-- Reference Font (Database) --}}
                                     @if (!empty($item['font']['reference_font']))
                                     <div class="flex items-center gap-3 mb-4 p-3 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
                                         <div class="p-2 bg-gray-100 dark:bg-gray-800 rounded">
@@ -596,7 +596,7 @@
                                             <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $item['font']['reference_font'] }}</p>
                                         </div>
                                     </div>
-                                    @endif
+                                    @endif -->
 
                                     <div class="flex flex-col md:flex-row gap-4 justify-between">
                                         <div class="flex-1">
