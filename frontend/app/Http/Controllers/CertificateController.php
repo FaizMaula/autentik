@@ -171,23 +171,27 @@ class CertificateController extends Controller
 
         // 2. Lakukan perbandingan font pada sertifikat saat ini
         foreach ($ocrDetails as &$item) {
+
+        // ✅ DEFAULT STATUS (WAJIB)
+            $item['font']['status'] = 'unknown';
+        
             if (!empty($item['font']['class'])) {
                 $detectedFont = $item['font']['class'];
-
+        
                 if (!empty($existingFonts)) {
                     if (in_array($detectedFont, $existingFonts)) {
                         $item['font']['status'] = 'match';
                     } else {
                         $item['font']['status'] = 'mismatch';
                     }
-                    // Tambahkan referensi font yang ditemukan di database
-                    $item['font']['reference_font'] = implode(', ', $existingFonts); 
+        
+                    $item['font']['reference_font'] = implode(', ', $existingFonts);
                 } else {
-                    // Jika tidak ada sertifikat lain untuk kegiatan ini di DB
                     $item['font']['status'] = 'new';
                 }
             }
         }
+
         // --- END LOGIKA VALIDASI FONT ---
 
         return view('results', [
