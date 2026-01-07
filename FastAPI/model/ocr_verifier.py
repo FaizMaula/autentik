@@ -258,15 +258,16 @@ def process_certificate(
 
 
     # === 5. Fuzzy match ===
+    # Use English field keys for consistency across languages
     targets = {
-        "nama": nama,
-        # "tahun_akademik": tahun_akademik,
-        "penyelenggara": penyelenggara,
-        # "tanggal_mulai": date_variations_mulai,
-        "tanggal_selesai": date_variations_selesai,
-        "nama_kegiatan": nama_kegiatan,
-        # "nama_kegiatan_inggris": nama_kegiatan_inggris,
-        # "berkas": berkas,
+        "name": nama,
+        # "academic_year": tahun_akademik,
+        "organizer": penyelenggara,
+        # "start_date": date_variations_mulai,
+        "end_date": date_variations_selesai,
+        "event_name": nama_kegiatan,
+        # "event_name_english": nama_kegiatan_inggris,
+        # "file": berkas,
     }
 
     match_scores = {}
@@ -394,9 +395,9 @@ def process_certificate(
             )
 
     S_final = (
-        (match_scores.get("nama_kegiatan", 0)
-        + match_scores.get("nama", 0) + match_scores.get("penyelenggara", 0)
-        +match_scores.get("tanggal_selesai", 0)) / 4
+        (match_scores.get("event_name", 0)
+        + match_scores.get("name", 0) + match_scores.get("organizer", 0)
+        + match_scores.get("end_date", 0)) / 4
     ) * 0.8 + S_search 
     return {
         "match_scores": match_scores,

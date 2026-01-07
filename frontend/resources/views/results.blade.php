@@ -471,7 +471,7 @@
                         <p class="text-gray-600 dark:text-gray-400">{{ __('results.dataMatching') }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Skor Kemiripan</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ __('results.similarityScore') }}</p>
                         <p class="text-3xl font-bold text-green-500">{{ round($avgTextScore, 1) }}%</p>
                     </div>
                 </div>
@@ -484,7 +484,7 @@
                         @endphp
                         <div class="flex flex-col p-4 bg-gray-50 dark:bg-[#333334] rounded-lg">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="font-medium text-gray-700 dark:text-gray-300 capitalize">{{ str_replace('_', ' ', $field) }}</span>
+                                <span class="font-medium text-gray-700 dark:text-gray-300 capitalize">{{ __('fields.' . $field) }}</span>
                                 <span class="font-bold {{ $colorClass }}">{{ round($score, 0) }}%</span>
                             </div>
                             <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
@@ -504,11 +504,11 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="text-2xl font-bold text-[#222223] dark:text-[#FEFEFE] mb-2">OCR & Font Analysis</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Analisis segmen teks, validasi konten, dan verifikasi jenis font.</p>
+                        <p class="text-gray-600 dark:text-gray-400">{{ __('results.ocrAnalysisDesc') }}</p>
                     </div>
                     <div class="text-right">
                         <span class="px-3 py-1 text-sm font-semibold rounded-full bg-[#B62A2D]/10 text-[#B62A2D] dark:bg-[#B62A2D]/20 dark:text-[#B62A2D]">
-                            {{ count($ocr_details ?? []) }} Segmen
+                            {{ count($ocr_details ?? []) }} {{ __('results.segments') }}
                         </span>
                     </div>
                 </div>
@@ -627,8 +627,8 @@
                         <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-full mb-3">
                             <i data-lucide="file-x" class="w-8 h-8 text-gray-400"></i>
                         </div>
-                        <p class="text-lg font-medium text-gray-600 dark:text-gray-300">Tidak ada data OCR</p>
-                        <p class="text-sm">Dokumen mungkin tidak mengandung teks yang dapat terbaca atau resolusi terlalu rendah.</p>
+                        <p class="text-lg font-medium text-gray-600 dark:text-gray-300">{{ __('results.noOcrData') }}</p>
+                        <p class="text-sm">{{ __('results.noOcrDataDesc') }}</p>
                     </div>
                 @endif
               </div>
@@ -644,7 +644,7 @@
                         <h3 class="text-2xl font-bold text-[#222223] dark:text-[#FEFEFE] mb-2">Google Search Results</h3>
                         <p class="text-gray-600 dark:text-gray-400">{{ __('results.googleReferencesDesc') }}</p>
                     </div>
-                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-[#B62A2D]/10 text-[#B62A2D]">{{ count($google_results) }} hasil</span>
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-[#B62A2D]/10 text-[#B62A2D]">{{ count($google_results) }} {{ __('results.resultsCount') }}</span>
                 </div>
 
                 <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar">
@@ -776,7 +776,7 @@
         <h2>{{ __('results.aiVerification') }}</h2>
       </div>
       <div class="print-section-content">
-         <p>{!! nl2br(e($verifikasi_ai ?? 'Tidak ada data')) !!}</p>
+         <p>{!! nl2br(e($verifikasi_ai ?? __('print.noData'))) !!}</p>
       </div>
     </div>
 
@@ -786,13 +786,13 @@
         <h2>Text Matching</h2>
       </div>
       <div class="print-section-content">
-        <p><strong>Rata-rata Skor:</strong> <span class="print-score">{{ round($avgTextScore, 1) }}%</span></p>
+        <p><strong>{{ __('print.averageScore') }}:</strong> <span class="print-score">{{ round($avgTextScore, 1) }}%</span></p>
         <table>
-          <thead><tr><th>Field</th><th>Kecocokan</th></tr></thead>
+          <thead><tr><th>{{ __('print.matchField') }}</th><th>{{ __('print.matchRate') }}</th></tr></thead>
           <tbody>
             @foreach($match_scores as $field => $score)
             <tr>
-                <td>{{ ucwords(str_replace('_', ' ', $field)) }}</td>
+                <td>{{ __('fields.' . $field) }}</td>
                 <td>{{ round($score) }}%</td>
             </tr>
             @endforeach
@@ -807,7 +807,7 @@
         <h2>Google Search</h2>
       </div>
       <div class="print-section-content">
-        <p><strong>Jumlah Hasil:</strong> {{ count($google_results) }} hasil ditemukan</p>
+        <p><strong>{{ __('print.resultsFound') }}:</strong> {{ count($google_results) }}</p>
         @foreach ($google_results as $index => $result)
         <div style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
             <p style="font-weight: bold; margin:0;">{{ $index + 1 }}. {{ $result['title'] }}</p>

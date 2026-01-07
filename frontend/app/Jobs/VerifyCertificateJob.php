@@ -56,6 +56,7 @@ class VerifyCertificateJob implements ShouldQueue
                 'tanggal_selesai' => $certificate->tanggal_selesai,
                 'nama_kegiatan' => $certificate->nama_kegiatan,
                 'nama_kegiatan_inggris' => $certificate->nama_kegiatan_inggris,
+                'lang' => $certificate->language ?? 'id',
             ]);
 
         if (!$response->ok()) {

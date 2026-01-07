@@ -263,5 +263,34 @@
     "admin.accessDenied": "Access denied. This page is for admins only.",
     "admin.searchPlaceholder": "Search name, event...",
     "admin.allStatus": "All Status",
-    "admin.noSearchResults": "No results match your search"
+    "admin.noSearchResults": "No results match your search",
+
+    "results.similarityScore": "Similarity Score",
+    "results.segments": "Segments",
+    "results.resultsCount": "results",
+    "results.ocrAnalysisDesc": "Text segment analysis, content validation, and font verification.",
+    "results.noOcrData": "No OCR Data",
+    "results.noOcrDataDesc": "Document may not contain readable text or resolution is too low.",
+    "results.dataMatching": "Text similarity analysis on certificate",
+    "results.googleReferencesDesc": "Search results related to certificate",
+    "results.segment": "Segment",
+    "results.detectedText": "Detected Text",
+    "results.fontType": "Font Type",
+    "results.ocrAccuracy": "OCR Accuracy",
+    "results.fontConfidence": "Confidence",
+    "results.aiNotAvailable": "AI verification not available.",
+    "results.noSearchResults": "No relevant search results found.",
+    "results.aiQuotaExceeded": "AI verification temporarily unavailable due to quota limits. Please try again later.",
+
+    "fields.name": "Name",
+    "fields.organizer": "Organizer",
+    "fields.end_date": "End Date",
+    "fields.event_name": "Event Name",
+
+    "print.resultsFound": "Results Found",
+    "print.averageScore": "Average Score",
+    "print.matchField": "Field",
+    "print.matchRate": "Match Rate",
+    "print.noData": "No data available",
+    "results.aiVerification": "AI Verification"
 }

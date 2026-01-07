@@ -263,5 +263,34 @@
     "admin.accessDenied": "Akses ditolak. Halaman ini hanya untuk admin.",
     "admin.searchPlaceholder": "Cari nama, kegiatan...",
     "admin.allStatus": "Semua Status",
-    "admin.noSearchResults": "Tidak ada hasil yang cocok dengan pencarian Anda"
+    "admin.noSearchResults": "Tidak ada hasil yang cocok dengan pencarian Anda",
+
+    "results.similarityScore": "Skor Kemiripan",
+    "results.segments": "Segmen",
+    "results.resultsCount": "hasil",
+    "results.ocrAnalysisDesc": "Analisis segmen teks, validasi konten, dan verifikasi jenis font.",
+    "results.noOcrData": "Tidak ada data OCR",
+    "results.noOcrDataDesc": "Dokumen mungkin tidak mengandung teks yang dapat terbaca atau resolusi terlalu rendah.",
+    "results.dataMatching": "Analisis kemiripan teks pada sertifikat",
+    "results.googleReferencesDesc": "Hasil pencarian terkait sertifikat",
+    "results.segment": "Segmen",
+    "results.detectedText": "Teks Terdeteksi",
+    "results.fontType": "Jenis Font",
+    "results.ocrAccuracy": "Akurasi OCR",
+    "results.fontConfidence": "Keyakinan",
+    "results.aiNotAvailable": "Verifikasi AI tidak tersedia.",
+    "results.noSearchResults": "Tidak ada hasil pencarian relevan.",
+    "results.aiQuotaExceeded": "Verifikasi AI sementara tidak tersedia karena batas kuota tercapai. Silakan coba kembali beberapa saat lagi.",
+
+    "fields.name": "Nama",
+    "fields.organizer": "Penyelenggara",
+    "fields.end_date": "Tanggal Selesai",
+    "fields.event_name": "Nama Kegiatan",
+
+    "print.resultsFound": "Hasil Ditemukan",
+    "print.averageScore": "Rata-rata Skor",
+    "print.matchField": "Field",
+    "print.matchRate": "Kecocokan",
+    "print.noData": "Tidak ada data",
+    "results.aiVerification": "Verifikasi AI"
 }
