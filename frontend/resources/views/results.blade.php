@@ -481,10 +481,11 @@
                         @php
                             $colorClass = $score >= 90 ? 'text-green-500' : ($score >= 75 ? 'text-yellow-500' : 'text-red-500');
                             $bgClass = $score >= 90 ? 'bg-green-500' : ($score >= 75 ? 'bg-yellow-500' : 'bg-red-500');
+                            $fieldKey = strtolower($field);
                         @endphp
                         <div class="flex flex-col p-4 bg-gray-50 dark:bg-[#333334] rounded-lg">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="font-medium text-gray-700 dark:text-gray-300 capitalize">{{ __('fields.' . $field) }}</span>
+                                <span class="font-medium text-gray-700 dark:text-gray-300 capitalize">{{ __('fields.' . $fieldKey) }}</span>
                                 <span class="font-bold {{ $colorClass }}">{{ round($score, 0) }}%</span>
                             </div>
                             <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
@@ -792,7 +793,7 @@
           <tbody>
             @foreach($match_scores as $field => $score)
             <tr>
-                <td>{{ __('fields.' . $field) }}</td>
+                <td>{{ __('fields.' . strtolower($field)) }}</td>
                 <td>{{ round($score) }}%</td>
             </tr>
             @endforeach

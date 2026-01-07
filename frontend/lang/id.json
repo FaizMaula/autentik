@@ -286,6 +286,10 @@
     "fields.organizer": "Penyelenggara",
     "fields.end_date": "Tanggal Selesai",
     "fields.event_name": "Nama Kegiatan",
+    "fields.nama": "Nama",
+    "fields.penyelenggara": "Penyelenggara",
+    "fields.tanggal_selesai": "Tanggal Selesai",
+    "fields.nama_kegiatan": "Nama Kegiatan",
 
     "print.resultsFound": "Hasil Ditemukan",
     "print.averageScore": "Rata-rata Skor",

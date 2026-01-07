@@ -286,6 +286,10 @@
     "fields.organizer": "Organizer",
     "fields.end_date": "End Date",
     "fields.event_name": "Event Name",
+    "fields.nama": "Name",
+    "fields.penyelenggara": "Organizer",
+    "fields.tanggal_selesai": "End Date",
+    "fields.nama_kegiatan": "Event Name",
 
     "print.resultsFound": "Results Found",
     "print.averageScore": "Average Score",
