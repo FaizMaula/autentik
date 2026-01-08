@@ -114,8 +114,8 @@
       </nav>
 
       <!-- Mobile Menu Button -->
-      <button id="mobileMenuButton" class="md:hidden text-white p-2 hover:bg-white/10 rounded-xl transition-all duration-300" aria-label="Toggle menu">
-        <i data-lucide="menu" style="width:22px;height:22px"></i>
+      <button id="mobileMenuButton" class="md:hidden text-white p-2 hover:bg-white/10 rounded-xl transition-all duration-300 relative z-50" aria-label="Toggle menu">
+        <i data-lucide="menu" class="pointer-events-none" style="width:22px;height:22px"></i>
       </button>
     </div>
 

@@ -127,8 +127,18 @@ window.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("mobileMenuButton");
     const menu = document.getElementById("mobileMenu");
     if (!btn || !menu) return;
-    btn.addEventListener("click", () => {
+    
+    btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         menu.classList.toggle("hidden");
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add("hidden");
+        }
     });
 })();
 
