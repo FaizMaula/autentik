@@ -127,13 +127,13 @@ window.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("mobileMenuButton");
     const menu = document.getElementById("mobileMenu");
     if (!btn || !menu) return;
-    
+
     btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         menu.classList.toggle("hidden");
     });
-    
+
     // Close mobile menu when clicking outside
     document.addEventListener("click", (e) => {
         if (!btn.contains(e.target) && !menu.contains(e.target)) {
@@ -201,11 +201,11 @@ window.addEventListener("DOMContentLoaded", () => {
     function showPreview(file) {
         clearPreview();
         if (!filePreviewWrap) return;
-        
+
         // Hide icon and text after upload
         if (fileDropper) fileDropper.classList.add("hidden");
         if (removeFileBtn) removeFileBtn.classList.remove("hidden");
-        
+
         if (file.type.startsWith("image/")) {
             const img = document.createElement("img");
             img.className = "max-h-64 mx-auto rounded-lg shadow-md";
@@ -257,24 +257,30 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Drag & Drop handlers
     if (fileDropZone) {
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
             fileDropZone.addEventListener(eventName, (e) => {
                 e.preventDefault();
                 e.stopPropagation();
             });
         });
 
-        ['dragenter', 'dragover'].forEach(eventName => {
+        ["dragenter", "dragover"].forEach((eventName) => {
             fileDropZone.addEventListener(eventName, () => {
                 if (dropOverlay) dropOverlay.classList.remove("hidden");
-                fileDropZone.classList.add("border-[#B62A2D]", "bg-[#B62A2D]/5");
+                fileDropZone.classList.add(
+                    "border-[#B62A2D]",
+                    "bg-[#B62A2D]/5"
+                );
             });
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
+        ["dragleave", "drop"].forEach((eventName) => {
             fileDropZone.addEventListener(eventName, () => {
                 if (dropOverlay) dropOverlay.classList.add("hidden");
-                fileDropZone.classList.remove("border-[#B62A2D]", "bg-[#B62A2D]/5");
+                fileDropZone.classList.remove(
+                    "border-[#B62A2D]",
+                    "bg-[#B62A2D]/5"
+                );
             });
         });
 
@@ -290,7 +296,8 @@ window.addEventListener("DOMContentLoaded", () => {
         });
 
         fileDropZone.addEventListener("click", (e) => {
-            if (e.target.closest("button") || fileInput.files?.length > 0) return;
+            if (e.target.closest("button") || fileInput.files?.length > 0)
+                return;
             fileInput.click();
         });
     }
@@ -310,13 +317,13 @@ window.addEventListener("DOMContentLoaded", () => {
                 processingModal.classList.remove("hidden");
                 processingModal.classList.add("flex");
             }
-            
+
             // Disable submit button to prevent double submission
             if (submitBtn) {
                 submitBtn.setAttribute("disabled", "true");
                 submitBtn.classList.add("opacity-50", "cursor-not-allowed");
             }
-            
+
             // Form will submit normally to Laravel backend
             // The processing modal will stay visible during server processing
         });
