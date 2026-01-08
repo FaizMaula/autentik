@@ -171,26 +171,39 @@ class CertificateController extends Controller
 
         // 2. Lakukan perbandingan font pada sertifikat saat ini
         foreach ($ocrDetails as &$item) {
-
-        // ✅ DEFAULT STATUS (WAJIB)
-            $item['font']['status'] = 'unknown';
         
-            if (!empty($item['font']['class'])) {
-                $detectedFont = $item['font']['class'];
-        
-                if (!empty($existingFonts)) {
-                    if (in_array($detectedFont, $existingFonts)) {
-                        $item['font']['status'] = 'match';
-                    } else {
-                        $item['font']['status'] = 'mismatch';
-                    }
-        
-                    $item['font']['reference_font'] = implode(', ', $existingFonts);
-                } else {
-                    $item['font']['status'] = 'new';
-                }
+            if (empty($item['font']) || empty($item['font']['class'])) {
+                continue;
             }
+        
+            $confidence = (float) ($item['font']['confidence'] ?? 0);
+            $detectedFont = trim($item['font']['class']);
+        
+            // 1️⃣ UNKNOWN hanya untuk confidence rendah
+            if ($confidence < 0.4) {
+                $item['font']['class'] = 'UNKNOWN';
+                $item['font']['status'] = 'unknown';
+                continue;
+            }
+        
+            // 2️⃣ Jika belum ada reference font sama sekali
+            if (empty($existingFonts)) {
+                $item['font']['status'] = 'no_reference';
+                $item['font']['reference_font'] = null;
+                continue;
+            }
+        
+            // 3️⃣ Bandingkan dengan reference
+            if (in_array($detectedFont, $existingFonts)) {
+                $item['font']['status'] = 'match';
+            } else {
+                $item['font']['status'] = 'mismatch';
+            }
+        
+            $item['font']['reference_font'] = implode(', ', $existingFonts);
         }
+
+
 
         // --- END LOGIKA VALIDASI FONT ---
 
