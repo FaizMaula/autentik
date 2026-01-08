@@ -523,17 +523,17 @@
                             $fontClass = trim($font['class'] ?? '');
                             $fontConfidence = (float) ($font['confidence'] ?? 0);
                             $ocrAccuracy = (float) ($item['accuracy'] ?? 0);
+                            $fontStatus = $font['status'] ?? null;
                         @endphp
                         
                         @if (
                             !is_array($font) ||
-                            $ocrAccuracy < 0.5 ||
-                            $fontConfidence < 0.6 ||
                             $fontClass === '' ||
-                            strtoupper($fontClass) === 'UNKNOWN'
+                            $fontStatus === 'unknown' ||
+                            $ocrAccuracy < 0.3
                         )
                             @continue
-                        @endif
+                    @endif
 
 
                         <div class="bg-gray-50 dark:bg-[#333334] rounded-xl p-5 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
