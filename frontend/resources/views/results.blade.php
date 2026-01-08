@@ -520,15 +520,17 @@
                         {{-- Filter: Skip if accuracy low or no font data --}}
                         @php
                             $font = $item['font'] ?? null;
-                            $fontConfidence = ($font['confidence'] ?? 0);
-                            $fontClass = $font['class'] ?? 'UNKNOWN';
+                            $fontClass = trim($font['class'] ?? '');
+                            $fontConfidence = (float) ($font['confidence'] ?? 0);
+                            $ocrAccuracy = (float) ($item['accuracy'] ?? 0);
                         @endphp
                         
                         @if (
-                            empty($font) ||
-                            ($item['accuracy'] ?? 0) < 0.5 ||
-                            $fontConfidence <= 0 ||
-                            $fontClass === 'UNKNOWN'
+                            !is_array($font) ||
+                            $ocrAccuracy < 0.5 ||
+                            $fontConfidence < 0.6 ||
+                            $fontClass === '' ||
+                            strtoupper($fontClass) === 'UNKNOWN'
                         )
                             @continue
                         @endif
