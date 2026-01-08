@@ -526,7 +526,7 @@
                         
                         @if (
                             empty($font) ||
-                            ($item['accuracy'] ?? 0) < 0.3 ||
+                            ($item['accuracy'] ?? 0) < 0.5 ||
                             $fontConfidence <= 0 ||
                             $fontClass === 'UNKNOWN'
                         )
