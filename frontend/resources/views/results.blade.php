@@ -733,19 +733,19 @@
     </div>
 
     {{-- Mobile Floating Buttons --}}
-    <div class="md:hidden fixed bottom-{{ $isInternal ? '4' : '24' }} right-4 z-50 flex flex-col gap-2">
+    <div class="md:hidden fixed bottom-6 right-4 z-[60] flex flex-col gap-3">
       {{-- Back Button --}}
-      <button type="button" onclick="history.back()" class="w-12 h-12 rounded-full glass-card-strong flex items-center justify-center shadow-lg bg-white dark:bg-[#333334]">
-        <i data-lucide="arrow-left" class="w-5 h-5 text-[#222223] dark:text-[#FEFEFE]"></i>
+      <button type="button" onclick="history.back()" class="w-14 h-14 rounded-full flex items-center justify-center shadow-xl bg-white dark:bg-[#444445] border-2 border-gray-200 dark:border-gray-600 hover:scale-110 transition-transform active:scale-95">
+        <i data-lucide="arrow-left" class="w-6 h-6 text-[#222223] dark:text-[#FEFEFE] pointer-events-none"></i>
       </button>
       {{-- Restart Button --}}
-      <a href="/form" class="w-12 h-12 rounded-full glass-card-strong flex items-center justify-center shadow-lg bg-white dark:bg-[#333334]">
-        <i data-lucide="refresh-cw" class="w-5 h-5 text-[#B62A2D]"></i>
+      <a href="/form" class="w-14 h-14 rounded-full flex items-center justify-center shadow-xl bg-white dark:bg-[#444445] border-2 border-gray-200 dark:border-gray-600 hover:scale-110 transition-transform active:scale-95">
+        <i data-lucide="refresh-cw" class="w-6 h-6 text-[#B62A2D] pointer-events-none"></i>
       </a>
       {{-- Download Button (Only for External) --}}
       @if(!$isInternal)
-      <button type="button" onclick="window.print()" class="w-12 h-12 rounded-full glass-card-strong flex items-center justify-center shadow-lg bg-white dark:bg-[#333334]">
-        <i data-lucide="download" class="w-5 h-5 text-[#B62A2D]"></i>
+      <button type="button" onclick="window.print()" class="w-14 h-14 rounded-full flex items-center justify-center shadow-xl bg-[#B62A2D] border-2 border-[#B62A2D] hover:scale-110 transition-transform active:scale-95">
+        <i data-lucide="download" class="w-6 h-6 text-white pointer-events-none"></i>
       </button>
       @endif
     </div>
@@ -850,10 +850,14 @@
 .dark .results-nav-btn.active > div { box-shadow: 0 0 0 3px rgba(182, 42, 45, 0.5); }
 .dark .results-nav-btn.active[data-slide-target="overall"] > div { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5); }
 
-.results-nav-btn-mobile { background: rgba(255, 255, 255, 0.5); }
-.results-nav-btn-mobile.active { background: #B62A2D; }
-.results-nav-btn-mobile.active i { color: white !important; }
-.dark .results-nav-btn-mobile { background: rgba(255, 255, 255, 0.1); }
+.results-nav-btn-mobile { background: rgba(255, 255, 255, 0.7); border: 2px solid transparent; }
+.results-nav-btn-mobile.active { background: rgba(255, 255, 255, 0.9); border-color: #B62A2D; box-shadow: 0 0 0 3px rgba(182, 42, 45, 0.3); }
+.results-nav-btn-mobile.active[data-slide-target="overall"] { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3); }
+.results-nav-btn-mobile.active[data-slide-target="internal-status"] { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3); }
+.dark .results-nav-btn-mobile { background: rgba(68, 68, 69, 0.8); }
+.dark .results-nav-btn-mobile.active { background: rgba(68, 68, 69, 1); border-color: #B62A2D; box-shadow: 0 0 0 3px rgba(182, 42, 45, 0.4); }
+.dark .results-nav-btn-mobile.active[data-slide-target="overall"] { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4); }
+.dark .results-nav-btn-mobile.active[data-slide-target="internal-status"] { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4); }
 
 .results-slider-container { min-height: 400px; isolation: isolate; }
 .results-slide .glass-card-strong { overflow: hidden; isolation: isolate; box-shadow: 0 4px 20px rgba(34, 34, 35, 0.08); }
