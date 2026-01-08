@@ -180,7 +180,7 @@ class CertificateController extends Controller
             $detectedFont = trim($item['font']['class']);
         
             // 1️⃣ UNKNOWN hanya untuk confidence rendah
-            if ($confidence < 0.4) {
+            if ($confidence < 0.1) {
                 $item['font']['class'] = 'UNKNOWN';
                 $item['font']['status'] = 'unknown';
                 continue;
