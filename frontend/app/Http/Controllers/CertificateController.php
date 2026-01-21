@@ -334,4 +334,41 @@ class CertificateController extends Controller
             'statuses' => $statuses
         ]);
     }
+
+    /**
+     * Get a temporary signed URL for viewing the certificate file
+     */
+    public function getCertificateFileUrl($id)
+    {
+        $certificate = Certificate::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Only external certificates have files
+        if ($certificate->certificate_type !== 'external' || empty($certificate->berkas)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('results.noFileUploaded')
+            ], 404);
+        }
+
+        try {
+            // Generate a temporary signed URL (1 hour expiry)
+            $url = $certificate->getTemporaryFileUrl(60);
+            $fileType = $certificate->file_type;
+            $filename = basename($certificate->berkas);
+
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+                'file_type' => $fileType,
+                'filename' => $filename
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => __('results.fileUrlError')
+            ], 500);
+        }
+    }
 }

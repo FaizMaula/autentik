@@ -205,6 +205,18 @@
                   {{ __('results.googleSearch') }}
                 </div>
               </button>
+              
+              {{-- View Certificate File Button (External only) --}}
+              @if(!empty($certificate->berkas))
+              <button type="button" id="viewCertificateBtn" class="results-nav-btn w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50 transition-colors">
+                  <i data-lucide="file-scan" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <div class="absolute left-full ml-3 px-3 py-1.5 bg-[#222223] dark:bg-[#FEFEFE] text-white dark:text-[#222223] text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {{ __('results.viewCertificate') }}
+                </div>
+              </button>
+              @endif
               @endif
             </div>
           </div>
@@ -241,6 +253,12 @@
             <button type="button" data-slide-target="google" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
               <i data-lucide="search" class="w-5 h-5 text-[#B62A2D]"></i>
             </button>
+            {{-- View Certificate File Button (Mobile, External only) --}}
+            @if(!empty($certificate->berkas))
+            <button type="button" id="viewCertificateBtnMobile" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-blue-100 dark:bg-blue-900/40">
+              <i data-lucide="file-scan" class="w-5 h-5 text-blue-500"></i>
+            </button>
+            @endif
             @endif
           </div>
         </div>
@@ -433,6 +451,54 @@
                         <p class="text-sm text-gray-600 dark:text-gray-300">OCR Segments</p>
                     </div>
                 </div>
+                
+                {{-- Admin Status Update Panel (Only for admin viewing suspicious certificates) --}}
+                @if(isset($isAdmin) && $isAdmin && $status === 'suspicious')
+                <div class="mt-8 p-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl" id="adminStatusPanel">
+                  <div class="flex items-start gap-4 mb-4">
+                    <div class="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
+                      <i data-lucide="shield-check" class="w-6 h-6 text-amber-600 dark:text-amber-400"></i>
+                    </div>
+                    <div class="flex-1">
+                      <h4 class="text-lg font-bold text-amber-800 dark:text-amber-300 mb-1">{{ __('results.adminReviewTitle') }}</h4>
+                      <p class="text-sm text-amber-700 dark:text-amber-400">{{ __('results.adminReviewDesc') }}</p>
+                    </div>
+                  </div>
+                  
+                  {{-- Notes textarea --}}
+                  <div class="mb-4">
+                    <label for="adminNotes" class="block text-sm font-medium text-amber-800 dark:text-amber-300 mb-2">
+                      {{ __('results.adminNotes') }} <span class="text-amber-600 dark:text-amber-500">({{ __('results.optional') }})</span>
+                    </label>
+                    <textarea 
+                      id="adminNotes" 
+                      rows="3" 
+                      class="w-full px-4 py-3 bg-white dark:bg-[#2D2D2E] border border-amber-200 dark:border-amber-700 rounded-xl text-[#222223] dark:text-[#FEFEFE] placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none transition-colors"
+                      placeholder="{{ __('results.adminNotesPlaceholder') }}"
+                    ></textarea>
+                  </div>
+                  
+                  {{-- Action buttons --}}
+                  <div class="flex flex-col sm:flex-row gap-3">
+                    <button 
+                      type="button" 
+                      id="markVerifiedBtn"
+                      class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-colors"
+                    >
+                      <i data-lucide="check-circle" class="w-5 h-5"></i>
+                      {{ __('results.markAsVerified') }}
+                    </button>
+                    <button 
+                      type="button" 
+                      id="markNotVerifiedBtn"
+                      class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-colors"
+                    >
+                      <i data-lucide="x-circle" class="w-5 h-5"></i>
+                      {{ __('results.markAsNotVerified') }}
+                    </button>
+                  </div>
+                </div>
+                @endif
               </div>
             </div>
 
@@ -838,6 +904,110 @@
   </div>
 </div>
 
+{{-- Certificate File Viewer Modal --}}
+@if(!$isInternal && !empty($certificate->berkas))
+<div id="certificateViewerModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    {{-- Background overlay --}}
+    <div id="modalOverlay" class="fixed inset-0 bg-gray-500/75 dark:bg-black/80 backdrop-blur-sm transition-opacity"></div>
+
+    {{-- Modal panel --}}
+    <div class="inline-block align-bottom bg-white dark:bg-[#2D2D2E] rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+      {{-- Header --}}
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+            <i data-lucide="file-scan" class="w-5 h-5 text-blue-500"></i>
+          </div>
+          <div>
+            <h3 id="modal-title" class="text-lg font-bold text-[#222223] dark:text-[#FEFEFE]">{{ __('results.viewCertificate') }}</h3>
+            <p id="modalFilename" class="text-sm text-gray-500 dark:text-gray-400"></p>
+          </div>
+        </div>
+        <button type="button" id="closeModalBtn" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
+        </button>
+      </div>
+      
+      {{-- Content --}}
+      <div id="modalContent" class="relative bg-gray-50 dark:bg-[#1D1D1E]" style="min-height: 500px; max-height: 80vh;">
+        {{-- Loading state --}}
+        <div id="modalLoading" class="absolute inset-0 flex items-center justify-center">
+          <div class="flex flex-col items-center gap-3">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('common.loading') }}</p>
+          </div>
+        </div>
+        
+        {{-- PDF Viewer --}}
+        <iframe id="pdfViewer" class="hidden w-full h-full" style="min-height: 80vh;"></iframe>
+        
+        {{-- Image Viewer --}}
+        <div id="imageViewerContainer" class="hidden w-full h-full flex items-center justify-center p-4 overflow-auto" style="min-height: 500px; max-height: 80vh;">
+          <img id="imageViewer" class="max-w-full max-h-full object-contain rounded-lg shadow-lg" alt="Certificate">
+        </div>
+        
+        {{-- Error state --}}
+        <div id="modalError" class="hidden absolute inset-0 flex items-center justify-center">
+          <div class="flex flex-col items-center gap-3 text-center p-8">
+            <div class="p-4 bg-red-100 dark:bg-red-900/40 rounded-full">
+              <i data-lucide="alert-circle" class="w-8 h-8 text-red-500"></i>
+            </div>
+            <p id="modalErrorText" class="text-sm text-red-600 dark:text-red-400"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+
+{{-- Admin Status Update Confirmation Modal --}}
+@if(isset($isAdmin) && $isAdmin && !$isInternal && $status === 'suspicious')
+<div id="statusConfirmModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="confirm-modal-title" role="dialog" aria-modal="true">
+  <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    {{-- Background overlay --}}
+    <div id="confirmModalOverlay" class="fixed inset-0 bg-gray-500/75 dark:bg-black/80 backdrop-blur-sm transition-opacity"></div>
+
+    {{-- Modal panel --}}
+    <div class="inline-block align-bottom bg-white dark:bg-[#2D2D2E] rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      {{-- Header --}}
+      <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-3">
+          <div id="confirmIconContainer" class="p-3 rounded-xl">
+            <i id="confirmIcon" class="w-6 h-6"></i>
+          </div>
+          <h3 id="confirm-modal-title" class="text-xl font-bold text-[#222223] dark:text-[#FEFEFE]"></h3>
+        </div>
+      </div>
+      
+      {{-- Content --}}
+      <div class="px-6 py-5">
+        <p id="confirmMessage" class="text-gray-700 dark:text-gray-300 mb-4"></p>
+        
+        <div id="confirmNotesPreview" class="hidden mb-4 p-4 bg-gray-50 dark:bg-[#333334] rounded-xl">
+          <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('results.adminNotes') }}</p>
+          <p id="confirmNotesText" class="text-sm text-gray-700 dark:text-gray-300"></p>
+        </div>
+        
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('results.actionCannotBeUndone') }}</p>
+      </div>
+      
+      {{-- Footer --}}
+      <div class="px-6 py-4 bg-gray-50 dark:bg-[#1D1D1E] flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+        <button type="button" id="cancelConfirmBtn" class="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium rounded-xl transition-colors">
+          {{ __('admin.cancel') }}
+        </button>
+        <button type="button" id="proceedConfirmBtn" class="px-5 py-2.5 font-medium rounded-xl transition-colors flex items-center justify-center gap-2">
+          <span id="proceedBtnText"></span>
+          <div id="proceedBtnSpinner" class="hidden animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+
 {{-- Hide the default footer from layout since it's included above --}}
 @section('hide_footer', true)
 
@@ -928,6 +1098,231 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+  // Certificate File Viewer Modal Logic
+  @if(!$isInternal && !empty($certificate->berkas))
+  const modal = document.getElementById('certificateViewerModal');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const modalLoading = document.getElementById('modalLoading');
+  const modalError = document.getElementById('modalError');
+  const modalErrorText = document.getElementById('modalErrorText');
+  const modalFilename = document.getElementById('modalFilename');
+  const pdfViewer = document.getElementById('pdfViewer');
+  const imageViewerContainer = document.getElementById('imageViewerContainer');
+  const imageViewer = document.getElementById('imageViewer');
+  const viewCertificateBtn = document.getElementById('viewCertificateBtn');
+  const viewCertificateBtnMobile = document.getElementById('viewCertificateBtnMobile');
+  
+  const certificateId = {{ $certificate->id ?? 0 }};
+  const isAdmin = {{ isset($isAdmin) && $isAdmin ? 'true' : 'false' }};
+  
+  function openModal() {
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    fetchCertificateFile();
+  }
+  
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+    resetModalState();
+  }
+  
+  function resetModalState() {
+    modalLoading.classList.remove('hidden');
+    modalError.classList.add('hidden');
+    pdfViewer.classList.add('hidden');
+    pdfViewer.src = '';
+    imageViewerContainer.classList.add('hidden');
+    imageViewer.src = '';
+    modalFilename.textContent = '';
+  }
+  
+  function showError(message) {
+    modalLoading.classList.add('hidden');
+    modalError.classList.remove('hidden');
+    modalErrorText.textContent = message;
+  }
+  
+  async function fetchCertificateFile() {
+    try {
+      // Use admin route if admin, otherwise regular user route
+      const url = isAdmin 
+        ? `/admin/certificate/${certificateId}/file-url`
+        : `/certificate/${certificateId}/file-url`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        showError(data.message || '{{ __("results.fileUrlError") }}');
+        return;
+      }
+      
+      modalFilename.textContent = data.filename;
+      modalLoading.classList.add('hidden');
+      
+      if (data.file_type === 'pdf') {
+        pdfViewer.src = data.url;
+        pdfViewer.classList.remove('hidden');
+      } else if (data.file_type === 'image') {
+        imageViewer.src = data.url;
+        imageViewerContainer.classList.remove('hidden');
+      } else {
+        showError('{{ __("results.unsupportedFileType") }}');
+      }
+    } catch (error) {
+      console.error('Error fetching certificate file:', error);
+      showError('{{ __("results.fileUrlError") }}');
+    }
+  }
+  
+  // Event listeners
+  if (viewCertificateBtn) viewCertificateBtn.addEventListener('click', openModal);
+  if (viewCertificateBtnMobile) viewCertificateBtnMobile.addEventListener('click', openModal);
+  closeModalBtn.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', closeModal);
+  
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+  @endif
+
+  // Admin Status Update Logic
+  @if(isset($isAdmin) && $isAdmin && !$isInternal && $status === 'suspicious')
+  const adminCertificateId = {{ $certificate->id ?? 0 }};
+  const adminNotesTextarea = document.getElementById('adminNotes');
+  const markVerifiedBtn = document.getElementById('markVerifiedBtn');
+  const markNotVerifiedBtn = document.getElementById('markNotVerifiedBtn');
+  const statusConfirmModal = document.getElementById('statusConfirmModal');
+  const confirmModalOverlay = document.getElementById('confirmModalOverlay');
+  const cancelConfirmBtn = document.getElementById('cancelConfirmBtn');
+  const proceedConfirmBtn = document.getElementById('proceedConfirmBtn');
+  const proceedBtnText = document.getElementById('proceedBtnText');
+  const proceedBtnSpinner = document.getElementById('proceedBtnSpinner');
+  const confirmIconContainer = document.getElementById('confirmIconContainer');
+  const confirmIcon = document.getElementById('confirmIcon');
+  const confirmModalTitle = document.getElementById('confirm-modal-title');
+  const confirmMessage = document.getElementById('confirmMessage');
+  const confirmNotesPreview = document.getElementById('confirmNotesPreview');
+  const confirmNotesText = document.getElementById('confirmNotesText');
+  const adminStatusPanel = document.getElementById('adminStatusPanel');
+  
+  let pendingStatus = null;
+  
+  function openConfirmModal(newStatus) {
+    pendingStatus = newStatus;
+    const notes = adminNotesTextarea.value.trim();
+    
+    if (newStatus === 'verified') {
+      confirmIconContainer.className = 'p-3 rounded-xl bg-green-100 dark:bg-green-900/40';
+      confirmIcon.className = 'w-6 h-6 text-green-500';
+      confirmIcon.setAttribute('data-lucide', 'check-circle');
+      confirmModalTitle.textContent = '{{ __("results.confirmVerified") }}';
+      confirmMessage.textContent = '{{ __("results.confirmVerifiedDesc") }}';
+      proceedConfirmBtn.className = 'px-5 py-2.5 font-medium rounded-xl transition-colors flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white';
+      proceedBtnText.textContent = '{{ __("results.markAsVerified") }}';
+    } else {
+      confirmIconContainer.className = 'p-3 rounded-xl bg-red-100 dark:bg-red-900/40';
+      confirmIcon.className = 'w-6 h-6 text-red-500';
+      confirmIcon.setAttribute('data-lucide', 'x-circle');
+      confirmModalTitle.textContent = '{{ __("results.confirmNotVerified") }}';
+      confirmMessage.textContent = '{{ __("results.confirmNotVerifiedDesc") }}';
+      proceedConfirmBtn.className = 'px-5 py-2.5 font-medium rounded-xl transition-colors flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white';
+      proceedBtnText.textContent = '{{ __("results.markAsNotVerified") }}';
+    }
+    
+    if (notes) {
+      confirmNotesPreview.classList.remove('hidden');
+      confirmNotesText.textContent = notes;
+    } else {
+      confirmNotesPreview.classList.add('hidden');
+    }
+    
+    statusConfirmModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    // Refresh icons
+    if (window.lucide?.createIcons) window.lucide.createIcons();
+  }
+  
+  function closeConfirmModal() {
+    statusConfirmModal.classList.add('hidden');
+    document.body.style.overflow = '';
+    pendingStatus = null;
+  }
+  
+  async function updateStatus() {
+    if (!pendingStatus) return;
+    
+    const notes = adminNotesTextarea.value.trim();
+    
+    // Show loading state
+    proceedBtnText.classList.add('opacity-50');
+    proceedBtnSpinner.classList.remove('hidden');
+    proceedConfirmBtn.disabled = true;
+    cancelConfirmBtn.disabled = true;
+    
+    try {
+      const response = await fetch(`/admin/certificate/${adminCertificateId}/update-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          new_status: pendingStatus,
+          notes: notes
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Reload the page to show the updated status
+        window.location.reload();
+      } else {
+        alert(data.message || '{{ __("results.statusUpdateError") }}');
+        closeConfirmModal();
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('{{ __("results.statusUpdateError") }}');
+      closeConfirmModal();
+    } finally {
+      proceedBtnText.classList.remove('opacity-50');
+      proceedBtnSpinner.classList.add('hidden');
+      proceedConfirmBtn.disabled = false;
+      cancelConfirmBtn.disabled = false;
+    }
+  }
+  
+  // Event listeners for admin status update
+  markVerifiedBtn.addEventListener('click', () => openConfirmModal('verified'));
+  markNotVerifiedBtn.addEventListener('click', () => openConfirmModal('not_verified'));
+  cancelConfirmBtn.addEventListener('click', closeConfirmModal);
+  confirmModalOverlay.addEventListener('click', closeConfirmModal);
+  proceedConfirmBtn.addEventListener('click', updateStatus);
+  
+  // Close confirm modal on escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !statusConfirmModal.classList.contains('hidden')) {
+      closeConfirmModal();
+    }
+  });
+  @endif
 
   // Init Icons
   if (window.lucide?.createIcons) window.lucide.createIcons();

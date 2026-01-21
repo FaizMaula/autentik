@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Models\Certificate;
+use App\Models\CertificateStatusLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -386,5 +387,89 @@ class EventController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Get a temporary signed URL for viewing the certificate file.
+     */
+    public function getCertificateFileUrl($id)
+    {
+        $certificate = Certificate::findOrFail($id);
+
+        if (empty($certificate->berkas)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('results.noFileUploaded'),
+            ], 404);
+        }
+
+        $url = $certificate->getTemporaryFileUrl(60); // 1 hour expiry
+
+        if (!$url) {
+            return response()->json([
+                'success' => false,
+                'message' => __('results.fileUrlError'),
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'url' => $url,
+            'file_type' => $certificate->file_type,
+            'filename' => basename($certificate->berkas),
+        ]);
+    }
+
+    /**
+     * Update certificate verification status (admin only).
+     * Only allowed for certificates with 'suspicious' status.
+     */
+    public function updateCertificateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'new_status' => 'required|in:verified,not_verified',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $certificate = Certificate::findOrFail($id);
+
+        // Only allow updating suspicious certificates
+        $currentStatus = $certificate->overall_status;
+        if ($currentStatus !== 'suspicious') {
+            return response()->json([
+                'success' => false,
+                'message' => __('results.statusUpdateNotAllowed'),
+            ], 403);
+        }
+
+        // Determine new score based on new status
+        $oldScore = $certificate->final_score;
+        $newScore = $request->new_status === 'verified' ? 80 : 40; // 80 for verified, 40 for not_verified
+
+        // Create log entry
+        CertificateStatusLog::create([
+            'certificate_id' => $certificate->id,
+            'admin_id' => Auth::id(),
+            'old_status' => $currentStatus,
+            'new_status' => $request->new_status,
+            'old_score' => $oldScore,
+            'new_score' => $newScore,
+            'notes' => $request->notes,
+        ]);
+
+        // Update certificate score
+        $certificate->update([
+            'final_score' => $newScore,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('results.statusUpdateSuccess'),
+            'new_status' => $request->new_status,
+            'new_score' => $newScore,
+            'status_label' => $request->new_status === 'verified' 
+                ? __('results.verified') 
+                : __('results.notVerified'),
+        ]);
     }
 }

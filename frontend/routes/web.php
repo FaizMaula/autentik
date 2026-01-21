@@ -44,6 +44,12 @@ Route::get('certificate/result/{id}', [CertificateController::class, 'showResult
 
 Route::get('certificate/api/result/{id}', [CertificateController::class, 'apiResult']);
 
+// Get certificate file URL for viewing (authenticated users can only view their own)
+Route::middleware(['auth'])->group(function () {
+    Route::get('certificate/{id}/file-url', [CertificateController::class, 'getCertificateFileUrl'])
+        ->name('certificate.file-url');
+});
+
 Route::prefix('api')->group(function () {
     Route::get('/results', [CertificateController::class, 'apiAllResults']);
     Route::get('/results/{id}', [CertificateController::class, 'apiResult']);

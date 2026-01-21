@@ -35,4 +35,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // View certificate result (admin can view any user's certificate)
     Route::get('/certificate/{id}/result', [EventController::class, 'showCertificateResult'])->name('result.show');
+    
+    // Get certificate file URL for viewing (API endpoint)
+    Route::get('/certificate/{id}/file-url', [EventController::class, 'getCertificateFileUrl'])->name('certificate.file-url');
+    
+    // Update certificate status (admin only - for suspicious certificates)
+    Route::post('/certificate/{id}/update-status', [EventController::class, 'updateCertificateStatus'])->name('certificate.update-status');
 });
