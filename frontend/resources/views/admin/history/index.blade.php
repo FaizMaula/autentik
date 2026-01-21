@@ -225,6 +225,26 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Immediate filter on status change
   statusFilter.addEventListener('change', filterTable);
+  
+  // Auto-refresh when navigating back to this page (bfcache)
+  // This ensures the status is always up-to-date after admin updates a certificate
+  window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+      // Page was restored from bfcache (back/forward navigation)
+      window.location.reload();
+    }
+  });
+  
+  // Also handle visibility change for tab switching
+  let lastHiddenTime = null;
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      lastHiddenTime = Date.now();
+    } else if (lastHiddenTime && (Date.now() - lastHiddenTime) > 5000) {
+      // Tab was hidden for more than 5 seconds, refresh to get latest data
+      window.location.reload();
+    }
+  });
 });
 </script>
 @endsection

@@ -904,81 +904,7 @@
   </div>
 </div>
 
-{{-- Certificate File Viewer Modal --}}
-@if(!$isInternal && !empty($certificate->berkas))
-<div id="certificateViewerModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-  <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-    {{-- Background overlay --}}
-    <div id="modalOverlay" class="fixed inset-0 bg-gray-500/75 dark:bg-black/80 backdrop-blur-sm transition-opacity z-10"></div>
-
-    {{-- Modal panel - z-20 to be above overlay --}}
-    <div class="relative z-20 inline-block align-bottom bg-white dark:bg-[#2D2D2E] rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
-      {{-- Header --}}
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center gap-3">
-          <div class="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-            <i data-lucide="file-scan" class="w-5 h-5 text-blue-500"></i>
-          </div>
-          <div>
-            <h3 id="modal-title" class="text-lg font-bold text-[#222223] dark:text-[#FEFEFE]">{{ __('results.viewCertificate') }}</h3>
-            <p id="modalFilename" class="text-sm text-gray-500 dark:text-gray-400"></p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <a id="openNewTabBtn" href="#" target="_blank" class="hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" title="{{ __('results.openInNewTab') }}">
-            <i data-lucide="external-link" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
-          </a>
-          <button type="button" id="closeModalBtn" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-            <i data-lucide="x" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
-          </button>
-        </div>
-      </div>
-      
-      {{-- Content --}}
-      <div id="modalContent" class="relative bg-gray-50 dark:bg-[#1D1D1E]" style="min-height: 500px; max-height: 80vh;">
-        {{-- Loading state --}}
-        <div id="modalLoading" class="absolute inset-0 flex items-center justify-center">
-          <div class="flex flex-col items-center gap-3">
-            <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('common.loading') }}</p>
-          </div>
-        </div>
-        
-        {{-- PDF Viewer (using object tag with fallback) --}}
-        <div id="pdfViewerContainer" class="hidden w-full h-full" style="min-height: 80vh;">
-          <object id="pdfViewer" type="application/pdf" class="w-full h-full" style="min-height: 80vh;">
-            <div class="flex flex-col items-center justify-center h-full py-16">
-              <div class="p-4 bg-blue-100 dark:bg-blue-900/40 rounded-full mb-4">
-                <i data-lucide="file-text" class="w-10 h-10 text-blue-500"></i>
-              </div>
-              <p class="text-gray-700 dark:text-gray-300 mb-4">{{ __('results.pdfCannotBeDisplayed') }}</p>
-              <a id="pdfFallbackLink" href="#" target="_blank" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
-                <i data-lucide="external-link" class="w-4 h-4"></i>
-                {{ __('results.openInNewTab') }}
-              </a>
-            </div>
-          </object>
-        </div>
-        
-        {{-- Image Viewer --}}
-        <div id="imageViewerContainer" class="hidden w-full h-full flex items-center justify-center p-4 overflow-auto" style="min-height: 500px; max-height: 80vh;">
-          <img id="imageViewer" class="max-w-full max-h-full object-contain rounded-lg shadow-lg" alt="Certificate">
-        </div>
-        
-        {{-- Error state --}}
-        <div id="modalError" class="hidden absolute inset-0 flex items-center justify-center">
-          <div class="flex flex-col items-center gap-3 text-center p-8">
-            <div class="p-4 bg-red-100 dark:bg-red-900/40 rounded-full">
-              <i data-lucide="alert-circle" class="w-8 h-8 text-red-500"></i>
-            </div>
-            <p id="modalErrorText" class="text-sm text-red-600 dark:text-red-400"></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-@endif
+{{-- Certificate viewer removed - now opens directly in new tab --}}
 
 {{-- Admin Status Update Confirmation Modal --}}
 @if(isset($isAdmin) && $isAdmin && !$isInternal && $status === 'suspicious')
@@ -1117,62 +1043,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Certificate File Viewer Modal Logic
+  // Certificate File Viewer - Direct Open in New Tab
   @if(!$isInternal && !empty($certificate->berkas))
-  const modal = document.getElementById('certificateViewerModal');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const modalLoading = document.getElementById('modalLoading');
-  const modalError = document.getElementById('modalError');
-  const modalErrorText = document.getElementById('modalErrorText');
-  const modalFilename = document.getElementById('modalFilename');
-  const pdfViewerContainer = document.getElementById('pdfViewerContainer');
-  const pdfViewer = document.getElementById('pdfViewer');
-  const pdfFallbackLink = document.getElementById('pdfFallbackLink');
-  const openNewTabBtn = document.getElementById('openNewTabBtn');
-  const imageViewerContainer = document.getElementById('imageViewerContainer');
-  const imageViewer = document.getElementById('imageViewer');
   const viewCertificateBtn = document.getElementById('viewCertificateBtn');
   const viewCertificateBtnMobile = document.getElementById('viewCertificateBtnMobile');
-  
-  let currentFileUrl = null;
   
   const certificateId = {{ $certificate->id ?? 0 }};
   const isAdmin = {{ isset($isAdmin) && $isAdmin ? 'true' : 'false' }};
   
-  function openModal() {
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    fetchCertificateFile();
-  }
-  
-  function closeModal() {
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-    resetModalState();
-  }
-  
-  function resetModalState() {
-    modalLoading.classList.remove('hidden');
-    modalError.classList.add('hidden');
-    pdfViewerContainer.classList.add('hidden');
-    pdfViewer.data = '';
-    pdfFallbackLink.href = '#';
-    openNewTabBtn.classList.add('hidden');
-    openNewTabBtn.href = '#';
-    imageViewerContainer.classList.add('hidden');
-    imageViewer.src = '';
-    modalFilename.textContent = '';
-    currentFileUrl = null;
-  }
-  
-  function showError(message) {
-    modalLoading.classList.add('hidden');
-    modalError.classList.remove('hidden');
-    modalErrorText.textContent = message;
-  }
-  
-  async function fetchCertificateFile() {
+  async function openCertificateInNewTab() {
+    // Show loading state on button
+    const btn = event.currentTarget;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center"><div class="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"></div></div>';
+    btn.disabled = true;
+    
     try {
       // Use admin route if admin, otherwise regular user route
       const url = isAdmin 
@@ -1188,48 +1073,26 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const data = await response.json();
       
-      if (!data.success) {
-        showError(data.message || '{{ __("results.fileUrlError") }}');
-        return;
-      }
-      
-      modalFilename.textContent = data.filename;
-      modalLoading.classList.add('hidden');
-      currentFileUrl = data.url;
-      
-      // Show open in new tab button
-      openNewTabBtn.href = data.url;
-      openNewTabBtn.classList.remove('hidden');
-      
-      if (data.file_type === 'pdf') {
-        // Use object tag for PDF with fallback
-        pdfViewer.data = data.url;
-        pdfFallbackLink.href = data.url;
-        pdfViewerContainer.classList.remove('hidden');
-      } else if (data.file_type === 'image') {
-        imageViewer.src = data.url;
-        imageViewerContainer.classList.remove('hidden');
+      if (data.success && data.url) {
+        // Open in new tab
+        window.open(data.url, '_blank');
       } else {
-        showError('{{ __("results.unsupportedFileType") }}');
+        alert(data.message || '{{ __("results.fileUrlError") }}');
       }
     } catch (error) {
       console.error('Error fetching certificate file:', error);
-      showError('{{ __("results.fileUrlError") }}');
+      alert('{{ __("results.fileUrlError") }}');
+    } finally {
+      // Restore button
+      btn.innerHTML = originalContent;
+      btn.disabled = false;
+      if (window.lucide?.createIcons) window.lucide.createIcons();
     }
   }
   
   // Event listeners
-  if (viewCertificateBtn) viewCertificateBtn.addEventListener('click', openModal);
-  if (viewCertificateBtnMobile) viewCertificateBtnMobile.addEventListener('click', openModal);
-  closeModalBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', closeModal);
-  
-  // Close on escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-      closeModal();
-    }
-  });
+  if (viewCertificateBtn) viewCertificateBtn.addEventListener('click', openCertificateInNewTab);
+  if (viewCertificateBtnMobile) viewCertificateBtnMobile.addEventListener('click', openCertificateInNewTab);
   @endif
 
   // Admin Status Update Logic
