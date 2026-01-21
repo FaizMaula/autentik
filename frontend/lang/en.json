@@ -192,6 +192,8 @@
     "results.noFileUploaded": "No file uploaded for this certificate",
     "results.fileUrlError": "Failed to load certificate file",
     "results.unsupportedFileType": "Unsupported file type",
+    "results.openInNewTab": "Open in New Tab",
+    "results.pdfCannotBeDisplayed": "PDF cannot be displayed in browser. Click button below to open.",
     "results.adminReviewTitle": "Admin Review Required",
     "results.adminReviewDesc": "This certificate has a suspicious status. You can manually update the verification status after review.",
     "results.adminNotes": "Review Notes",

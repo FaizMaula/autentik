@@ -192,6 +192,8 @@
     "results.noFileUploaded": "Tidak ada file yang diunggah untuk sertifikat ini",
     "results.fileUrlError": "Gagal memuat file sertifikat",
     "results.unsupportedFileType": "Tipe file tidak didukung",
+    "results.openInNewTab": "Buka di Tab Baru",
+    "results.pdfCannotBeDisplayed": "PDF tidak dapat ditampilkan di browser. Klik tombol di bawah untuk membuka.",
     "results.adminReviewTitle": "Perlu Tinjauan Admin",
     "results.adminReviewDesc": "Sertifikat ini memiliki status mencurigakan. Anda dapat memperbarui status verifikasi secara manual setelah ditinjau.",
     "results.adminNotes": "Catatan Tinjauan",
