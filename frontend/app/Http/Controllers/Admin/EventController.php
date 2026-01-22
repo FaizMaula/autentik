@@ -149,15 +149,12 @@ class EventController extends Controller
         foreach ($headerRow as $index => $header) {
             if (!$header) continue;
 
-            $normalizedHeader = strtolower(
-                preg_replace('/[^a-z0-9]/', '', $header)
-            );
+            // Fix: lowercase first, then remove non-alphanumeric characters
+            $normalizedHeader = preg_replace('/[^a-z0-9]/', '', strtolower(trim($header)));
 
             foreach ($aliases as $key => $possibleNames) {
                 foreach ($possibleNames as $alias) {
-                    $normalizedAlias = strtolower(
-                        preg_replace('/[^a-z0-9]/', '', $alias)
-                    );
+                    $normalizedAlias = preg_replace('/[^a-z0-9]/', '', strtolower($alias));
 
                     if ($normalizedHeader === $normalizedAlias) {
                         $map[$key] = $index;
