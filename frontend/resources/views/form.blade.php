@@ -79,10 +79,9 @@
           </div>
         </div>
 
-        <!-- Two Column Layout: Left and Right -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- LEFT COLUMN -->
-          <div id="leftColumn" class="space-y-5">
+        <!-- TOP SECTION: Event Names (Full Width) -->
+        <div class="mb-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <!-- Event Name (ID) - Dropdown for Internal, Text Input for External -->
             <div id="eventNameFieldsWrapper">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.eventName') }} <span class="text-red-500">*</span></label>
@@ -93,9 +92,9 @@
                   <option value="">{{ __('form.selectEvent') }}</option>
                   @foreach($events as $event)
                     <option value="{{ $event->event_name }}" 
-                            data-event-name-en="{{ $event->event_name_en }}"
-                            data-organizer="{{ $event->organizer }}"
-                            data-academic-year="{{ $event->academic_year }}"
+                            data-event-name-en="{{ $event->event_name_en ?? '' }}"
+                            data-organizer="{{ $event->organizer ?? '' }}"
+                            data-academic-year="{{ $event->academic_year ?? '' }}"
                             data-event-date="{{ $event->event_date ? $event->event_date->format('Y-m-d') : '' }}"
                             data-start-date="{{ $event->start_date ? $event->start_date->format('Y-m-d') : '' }}"
                             data-end-date="{{ $event->end_date ? $event->end_date->format('Y-m-d') : '' }}">
@@ -115,44 +114,50 @@
             <!-- Event Name (EN) -->
             <div id="eventNameEngWrapper">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.eventNameEng') }}</label>
-              <input type="text" name="nama_kegiatan_inggris" id="eventNameEng" placeholder="{{ __('form.eventNameEngPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
+              <input type="text" name="nama_kegiatan_inggris" id="eventNameEng" placeholder="{{ __('form.eventNameEngPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all bg-gray-50 dark:bg-gray-800/50" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Two Column Layout: Left (Auto-fill) and Right (User Input) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- LEFT COLUMN: Auto-filled fields from event data -->
+          <div id="leftColumn" class="space-y-5">
+            <!-- Organizer -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                {{ __('form.organizer') }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="penyelenggara" id="organizerInput" placeholder="{{ __('form.organizerPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all bg-gray-50 dark:bg-gray-800/50" required />
             </div>
 
-            <!-- Academic Year + Organizer (2 columns) -->
-            <div id="academicOrganizerWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- Academic Year -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.academicYear') }}</label>
-                <input type="text" name="tahun_akademik" id="academicYearInput" placeholder="{{ __('form.academicYearPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
-              </div>
-
-              <!-- Organizer -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {{ __('form.organizer') }} <span class="text-red-500">*</span>
-                </label>
-                <input type="text" name="penyelenggara" id="organizerInput" placeholder="{{ __('form.organizerPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
-              </div>
+            <!-- Academic Year -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.academicYear') }}</label>
+              <input type="text" name="tahun_akademik" id="academicYearInput" placeholder="{{ __('form.academicYearPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all bg-gray-50 dark:bg-gray-800/50" />
             </div>
 
             <!-- Event Date (Single Day) - For Internal -->
-            <div id="eventDateWrapper" class="hidden">
+            <div id="eventDateWrapper">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.eventDate') }}</label>
-              <input type="date" name="tanggal_kegiatan" id="eventDateInput" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
+              <input type="date" name="tanggal_kegiatan" id="eventDateInput" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-gray-50 dark:bg-gray-800/50" disabled />
             </div>
 
             <!-- Start Date + End Date (2 columns) -->
             <div id="dateFieldsWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.startDate') }} <span class="text-red-500" id="startDateRequired">*</span></label>
-                <input type="date" name="tanggal_mulai" id="startDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed" required />
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.startDate') }} <span class="text-red-500 hidden" id="startDateRequired">*</span></label>
+                <input type="date" name="tanggal_mulai" id="startDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-gray-50 dark:bg-gray-800/50" disabled />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.endDate') }} <span class="text-red-500" id="endDateRequired">*</span></label>
-                <input type="date" name="tanggal_selesai" id="endDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed" required />
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.endDate') }} <span class="text-red-500 hidden" id="endDateRequired">*</span></label>
+                <input type="date" name="tanggal_selesai" id="endDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-gray-50 dark:bg-gray-800/50" disabled />
               </div>
             </div>
+          </div>
 
+          <!-- RIGHT COLUMN: User input fields -->
+          <div id="rightColumn" class="space-y-5">
             <!-- Name -->
             <div id="nameFieldWrapper">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -169,10 +174,7 @@
               <input type="text" name="nim" id="nimInput" placeholder="{{ __('form.nimPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('form.nimHint') }}</p>
             </div>
-          </div>
 
-          <!-- RIGHT COLUMN -->
-          <div id="rightColumn" class="space-y-5">
             <!-- File Upload (External Only) -->
             <div id="fileUploadSection" class="hidden">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.fileUpload') }} <span class="text-red-500">*</span></label>
@@ -190,19 +192,6 @@
                 </div>
                 <div id="filePreviewContainer" class="mt-4"></div>
                 <button type="button" id="removeFileButton" class="hidden mt-4 px-4 py-2 bg-[#B62A2D] text-white rounded-lg hover:bg-[#9a2426] transition-colors mx-auto">{{ __('form.removeFile') }}</button>
-              </div>
-            </div>
-
-            <!-- Internal Info Card (Only for Internal) -->
-            <div id="internalInfoCard" class="glass-card rounded-xl p-5 border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20">
-              <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <div>
-                  <h4 class="font-semibold text-blue-800 dark:text-blue-300 text-sm mb-1">{{ __('form.internalVerificationTitle') }}</h4>
-                  <p class="text-xs text-blue-700 dark:text-blue-400">{{ __('form.internalVerificationDesc') }}</p>
-                </div>
               </div>
             </div>
 
@@ -282,7 +271,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // File upload section (only for External)
   const fileUploadSection = document.getElementById('fileUploadSection');
-  const internalInfoCard = document.getElementById('internalInfoCard');
   
   // Field label mapping for display names
   const fieldLabels = {
@@ -314,9 +302,8 @@ document.addEventListener('DOMContentLoaded', function() {
       eventNameText.removeAttribute('required');
       eventNameText.removeAttribute('name');
       
-      // Hide file upload, show internal info card
+      // Hide file upload for internal
       fileUploadSection.classList.add('hidden');
-      internalInfoCard.classList.remove('hidden');
       fileInput.removeAttribute('required');
       fileInput.value = '';
       
@@ -345,9 +332,8 @@ document.addEventListener('DOMContentLoaded', function() {
       eventNameText.setAttribute('required', 'true');
       eventNameText.setAttribute('name', 'nama_kegiatan');
       
-      // Show file upload, hide internal info card
+      // Show file upload for external
       fileUploadSection.classList.remove('hidden');
-      internalInfoCard.classList.add('hidden');
       fileInput.setAttribute('required', 'true');
       
       // Hide event date wrapper for external
@@ -387,17 +373,22 @@ document.addEventListener('DOMContentLoaded', function() {
       startDateInput.disabled = true;
       startDateInput.value = '';
       startDateInput.required = false;
+      startDateRequired.classList.add('hidden');
       endDateInput.disabled = true;
       endDateInput.value = '';
       endDateInput.required = false;
+      endDateRequired.classList.add('hidden');
       return;
     }
     
-    const eventDate = selectedOption.getAttribute('data-event-date');
-    const startDate = selectedOption.getAttribute('data-start-date');
-    const endDate = selectedOption.getAttribute('data-end-date');
+    // Get date values - check for non-empty strings
+    const eventDate = selectedOption.getAttribute('data-event-date') || '';
+    const startDate = selectedOption.getAttribute('data-start-date') || '';
+    const endDate = selectedOption.getAttribute('data-end-date') || '';
     
-    if (eventDate) {
+    console.log('Date values:', { eventDate, startDate, endDate }); // Debug
+    
+    if (eventDate && eventDate.trim() !== '') {
       // Single day event - enable event date, disable start/end
       eventDateInput.disabled = false;
       eventDateInput.value = eventDate;
@@ -413,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
       endDateInput.required = false;
       endDateRequired.classList.add('hidden');
       
-    } else if (startDate && endDate) {
+    } else if (startDate && startDate.trim() !== '' && endDate && endDate.trim() !== '') {
       // Multi-day event - disable event date, enable start/end
       eventDateInput.disabled = true;
       eventDateInput.value = '';
@@ -437,9 +428,11 @@ document.addEventListener('DOMContentLoaded', function() {
       startDateInput.disabled = true;
       startDateInput.value = '';
       startDateInput.required = false;
+      startDateRequired.classList.add('hidden');
       endDateInput.disabled = true;
       endDateInput.value = '';
       endDateInput.required = false;
+      endDateRequired.classList.add('hidden');
     }
   }
   
