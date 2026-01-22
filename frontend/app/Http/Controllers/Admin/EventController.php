@@ -36,108 +36,79 @@ class EventController extends Controller
     }
 
     /**
-     * Store a newly created event from Excel upload.
+     * Store a newly created event from form + Excel upload.
      */
     public function store(Request $request)
     {
         $request->validate([
+            'event_name' => 'required|string|max:255',
+            'event_name_en' => 'nullable|string|max:255',
+            'organizer' => 'required|string|max:255',
+            'academic_year' => 'required|string|max:20',
+            'duration_type' => 'required|in:single,multi',
+            'event_date' => 'required_if:duration_type,single|nullable|date',
+            'start_date' => 'required_if:duration_type,multi|nullable|date',
+            'end_date' => 'required_if:duration_type,multi|nullable|date|after_or_equal:start_date',
+            'description' => 'nullable|string|max:1000',
             'excel_file' => 'required|mimes:xlsx,xls,csv|max:10240', // Max 10MB
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Parse Excel file
+            // Create event from form data
+            $event = Event::create([
+                'uploaded_by' => Auth::id(),
+                'event_name' => $request->event_name,
+                'event_name_en' => $request->event_name_en,
+                'organizer' => $request->organizer,
+                'event_date' => $request->duration_type === 'single' ? $request->event_date : null,
+                'start_date' => $request->duration_type === 'multi' ? $request->start_date : null,
+                'end_date' => $request->duration_type === 'multi' ? $request->end_date : null,
+                'academic_year' => $request->academic_year,
+                'description' => $request->description,
+                'original_filename' => $request->file('excel_file')->getClientOriginalName(),
+            ]);
+
+            // Parse Excel file for participants only
             $file = $request->file('excel_file');
             $spreadsheet = IOFactory::load($file->getPathname());
             $worksheet = $spreadsheet->getActiveSheet();
             $rows = $worksheet->toArray();
 
-            // // First row should contain event info
-            // $eventHeaderRow = array_shift($rows); // Row 1 (judul kolom event)
-            // $eventInfoRow   = array_shift($rows); // Row 2 (isi event)
-            // $headerRow      = array_shift($rows); // Row 3 (header peserta)
-            // $eventHeaderRow = array_shift($rows); // row 1
-            // $eventInfoRow   = array_shift($rows); // row 2
-
-            // 1. Buang header event
-            array_shift($rows);
-
-            // 2. Ambil data event
-            $eventInfoRow = array_shift($rows);
-
-            // 3. Ambil header peserta
+            // First row is header
             $headerRow = array_shift($rows);
 
-            // $headerRow = null;
-
-            // cari baris yang mengandung "nim"
-            // foreach ($rows as $index => $row) {
-            //     foreach ($row as $cell) {
-            //         if (is_string($cell) && stripos($cell, 'nim') !== false) {
-            //             $headerRow = $row;
-            //             unset($rows[$index]); // hapus header dari data
-            //             $rows = array_values($rows);
-            //             break 2;
-            //         }
-            //     }
-            // }
-
             if (!$headerRow) {
-                throw new \Exception('Header peserta tidak ditemukan di file Excel.');
-            }
-            // $headerRow = array_values(array_filter($headerRow, fn($v) => $v !== null && $v !== ''));
-            // Extract event info from first row
-            $eventName = $eventInfoRow[0] ?? null;
-            $eventNameEn = $eventInfoRow[1] ?? null;
-            $organizer = $eventInfoRow[2] ?? null;
-            $eventDate = $this->parseDate($eventInfoRow[3] ?? null);
-            $startDate = $this->parseDate($eventInfoRow[4] ?? null);
-            $endDate = $this->parseDate($eventInfoRow[5] ?? null);
-            $academicYear = $eventInfoRow[6] ?? null;
-            $description = $eventInfoRow[7] ?? null;
-
-            // Validate required fields
-            if (empty($eventName) || empty($organizer)) {
-                throw new \Exception(__('admin.excelMissingEventInfo'));
+                throw new \Exception(__('admin.excelNoHeader'));
             }
 
-            $event = Event::create([
-                'uploaded_by' => Auth::id(),
-                'event_name' => $eventName,
-                'event_name_en' => $eventNameEn,
-                'organizer' => $organizer,
-                'event_date' => $eventDate,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'academic_year' => $academicYear,
-                'description' => $description,
-                'original_filename' => $file->getClientOriginalName(),
-            ]);
-            
             // Map headers to column indices
-            
-            $columnMap = $this->mapColumns($headerRow);
+            $columnMap = $this->mapParticipantColumns($headerRow);
 
-            // if (!isset($columnMap['nim']) || !isset($columnMap['name'])) {
-            //     throw new \Exception('Kolom NIM dan Nama Peserta wajib ada.');
-            // }
-            
             $participantsData = [];
             foreach ($rows as $row) {
-                $row = array_values(array_filter($row, fn($v) => $v !== null && $v !== ''));
-                if (empty(array_filter($row))) {
+                // Skip empty rows
+                if (empty(array_filter($row, fn($v) => $v !== null && $v !== ''))) {
+                    continue;
+                }
+
+                $nim = $this->getColumnValue($row, $columnMap, 'nim');
+                $name = $this->getColumnValue($row, $columnMap, 'name');
+
+                // Skip if no NIM or name
+                if (empty($nim) && empty($name)) {
                     continue;
                 }
 
                 $participantsData[] = [
                     'event_id' => $event->id,
-                    'nim' => $this->getColumnValue($row, $columnMap, 'nim') ?? '',
-                    'participant_name' => $this->getColumnValue($row, $columnMap, 'name') ?? '',
-                    'email' => $this->getColumnValue($row, $columnMap, 'email'),
+                    'nim' => $nim ?? '',
+                    'participant_name' => $name ?? '',
+                    'email' => null,
                     'faculty' => $this->getColumnValue($row, $columnMap, 'faculty'),
                     'study_program' => $this->getColumnValue($row, $columnMap, 'study_program'),
-                    'attendance_status' => $this->getColumnValue($row, $columnMap, 'status') ?? 'present',
+                    'attendance_status' => 'present',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -159,6 +130,43 @@ class EventController extends Controller
                 ->withInput()
                 ->with('error', __('admin.uploadError') . ': ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Map participant column headers to indices (simplified template).
+     */
+    private function mapParticipantColumns(array $headerRow): array
+    {
+        $map = [];
+        $aliases = [
+            'no' => ['no', 'nomor', 'number', '#'],
+            'nim' => ['nim', 'noinduk', 'nomorinduk', 'studentid', 'idmahasiswa'],
+            'name' => ['nama', 'namapeserta', 'participantname', 'namamahasiswa', 'name'],
+            'faculty' => ['fakultas', 'faculty'],
+            'study_program' => ['jurusan', 'prodi', 'programstudi', 'studyprogram', 'major'],
+        ];
+
+        foreach ($headerRow as $index => $header) {
+            if (!$header) continue;
+
+            $normalizedHeader = strtolower(
+                preg_replace('/[^a-z0-9]/', '', $header)
+            );
+
+            foreach ($aliases as $key => $possibleNames) {
+                foreach ($possibleNames as $alias) {
+                    $normalizedAlias = strtolower(
+                        preg_replace('/[^a-z0-9]/', '', $alias)
+                    );
+
+                    if ($normalizedHeader === $normalizedAlias) {
+                        $map[$key] = $index;
+                        break 2;
+                    }
+                }
+            }
+        }
+        return $map;
     }
 
     /**
@@ -241,46 +249,32 @@ class EventController extends Controller
     }
 
     /**
-     * Download Excel template for participant upload.
+     * Download Excel template for participant upload (simplified).
      */
     public function downloadTemplate()
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Row 1: Event Info Headers
-        $eventHeaders = ['Nama Kegiatan *', 'Nama Kegiatan (EN)', 'Penyelenggara *', 'Tanggal Kegiatan', 'Tanggal Mulai', 'Tanggal Selesai', 'Tahun Akademik', 'Deskripsi'];
-        $sheet->fromArray($eventHeaders, null, 'A1');
-        
-        // Row 2: Sample Event Info
-        $sampleEventInfo = ['Seminar Teknologi 2024', 'Technology Seminar 2024', 'Fakultas Teknik', '2024-12-15', '2024-12-15', '2024-12-15', '2024/2025', 'Deskripsi kegiatan'];
-        $sheet->fromArray($sampleEventInfo, null, 'A2');
+        // Row 1: Participant Headers (simplified)
+        $participantHeaders = ['No', 'NIM', 'Nama', 'Fakultas', 'Jurusan'];
+        $sheet->fromArray($participantHeaders, null, 'A1');
 
-        // Row 3: Participant Headers
-        $participantHeaders = ['NIM', 'Nama Peserta', 'Email', 'Fakultas', 'Program Studi', 'Status Kehadiran'];
-        $sheet->fromArray($participantHeaders, null, 'A3');
-
-        // Row 4+: Sample participant data
+        // Row 2+: Sample participant data
         $sampleData = [
-            ['123456789', 'John Doe', 'john@example.com', 'Fakultas Teknik', 'Teknik Informatika', 'Hadir'],
-            ['987654321', 'Jane Smith', 'jane@example.com', 'Fakultas Ekonomi', 'Manajemen', 'Hadir'],
+            [1, '123456789', 'John Doe', 'Fakultas Teknik', 'Teknik Informatika'],
+            [2, '987654321', 'Jane Smith', 'Fakultas Ekonomi', 'Manajemen'],
         ];
-        $sheet->fromArray($sampleData, null, 'A3');
-
-        // Style event info headers (Row 1)
-        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:H1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-        $sheet->getStyle('A1:H1')->getFill()->getStartColor()->setRGB('4A7C87');
-        $sheet->getStyle('A1:H1')->getFont()->getColor()->setRGB('FFFFFF');
+        $sheet->fromArray($sampleData, null, 'A2');
         
-        // Style participant headers (Row 3)
-        $sheet->getStyle('A3:F3')->getFont()->setBold(true);
-        $sheet->getStyle('A3:F3')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-        $sheet->getStyle('A3:F3')->getFill()->getStartColor()->setRGB('B62A2D');
-        $sheet->getStyle('A3:F3')->getFont()->getColor()->setRGB('FFFFFF');
+        // Style participant headers (Row 1)
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:E1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+        $sheet->getStyle('A1:E1')->getFill()->getStartColor()->setRGB('B62A2D');
+        $sheet->getStyle('A1:E1')->getFont()->getColor()->setRGB('FFFFFF');
         
         // Auto-size columns
-        foreach (range('A', 'H') as $col) {
+        foreach (range('A', 'E') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
@@ -295,45 +289,6 @@ class EventController extends Controller
         $writer->save($tempPath);
 
         return response()->download($tempPath, $filename)->deleteFileAfterSend(true);
-    }
-
-    /**
-     * Map column headers to indices.
-     */
-    private function mapColumns(array $headerRow): array
-    {
-        $map = [];
-        $aliases = [
-            'nim' => ['nim', 'noinduk', 'nomorinduk', 'studentid', 'idmahasiswa', 'NIM'],
-            'name' => ['nama', 'namapeserta', 'participantname', 'namamahasiswa','Nama Peserta'],
-            'email' => ['email', 'emailpeserta', 'surel', 'Email'],
-            'faculty' => ['fakultas', 'faculty', 'Fakultas'],
-            'study_program' => ['prodi', 'programstudi', 'studyprogram', 'jurusan', 'Program Studi'],
-            'status' => ['status', 'kehadiran', 'statuskehadiran', 'attendance','Status Kehadiran'],
-        ];
-
-        foreach ($headerRow as $index => $header) {
-            if (!$header) continue;
-
-            // NORMALISASI SUPER AMAN
-            $normalizedHeader = strtolower(
-                preg_replace('/[^a-z0-9]/', '', $header)
-            );
-
-            foreach ($aliases as $key => $possibleNames) {
-                foreach ($possibleNames as $alias) {
-                    $normalizedAlias = strtolower(
-                        preg_replace('/[^a-z0-9]/', '', $alias)
-                    );
-
-                    if ($normalizedHeader === $normalizedAlias) {
-                        $map[$key] = $index;
-                        break 2;
-                    }
-                }
-            }
-        }
-        return $map;
     }
 
     /**

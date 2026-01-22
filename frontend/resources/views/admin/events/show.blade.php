@@ -97,10 +97,8 @@
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">#</th>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.nim') }}</th>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.participantName') }}</th>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('auth.email') }}</th>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.faculty') }}</th>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.studyProgram') }}</th>
-                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.status') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -109,24 +107,12 @@
                   <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $index + 1 }}</td>
                   <td class="px-6 py-4 font-mono text-[#222223] dark:text-[#FEFEFE]">{{ $participant->nim }}</td>
                   <td class="px-6 py-4 font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $participant->participant_name }}</td>
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $participant->email ?? '-' }}</td>
                   <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $participant->faculty ?? '-' }}</td>
                   <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $participant->study_program ?? '-' }}</td>
-                  <td class="px-6 py-4 text-center">
-                    @if($participant->attendance_status === 'present' || $participant->attendance_status === 'Hadir')
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
-                        {{ __('admin.present') }}
-                      </span>
-                    @else
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                        {{ $participant->attendance_status }}
-                      </span>
-                    @endif
-                  </td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     {{ __('admin.noParticipants') }}
                   </td>
                 </tr>
