@@ -366,15 +366,19 @@ document.addEventListener('DOMContentLoaded', function() {
   function handleEventDateToggle() {
     const selectedOption = eventNameDropdown.options[eventNameDropdown.selectedIndex];
     
-    // Helper function to apply disabled styling
+    // Helper function to apply disabled styling - use inline style for guaranteed effect
     function applyDisabledStyle(input) {
       input.disabled = true;
+      input.style.opacity = '0.5';
+      input.style.cursor = 'not-allowed';
       input.classList.add('opacity-50', 'cursor-not-allowed');
     }
     
     // Helper function to remove disabled styling
     function removeDisabledStyle(input) {
       input.disabled = false;
+      input.style.opacity = '';
+      input.style.cursor = '';
       input.classList.remove('opacity-50', 'cursor-not-allowed');
     }
     
