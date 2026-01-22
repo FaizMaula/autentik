@@ -366,15 +366,27 @@ document.addEventListener('DOMContentLoaded', function() {
   function handleEventDateToggle() {
     const selectedOption = eventNameDropdown.options[eventNameDropdown.selectedIndex];
     
+    // Helper function to apply disabled styling
+    function applyDisabledStyle(input) {
+      input.disabled = true;
+      input.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    
+    // Helper function to remove disabled styling
+    function removeDisabledStyle(input) {
+      input.disabled = false;
+      input.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    
     if (!selectedOption || !selectedOption.value) {
       // No event selected - disable all date fields
-      eventDateInput.disabled = true;
+      applyDisabledStyle(eventDateInput);
       eventDateInput.value = '';
-      startDateInput.disabled = true;
+      applyDisabledStyle(startDateInput);
       startDateInput.value = '';
       startDateInput.required = false;
       startDateRequired.classList.add('hidden');
-      endDateInput.disabled = true;
+      applyDisabledStyle(endDateInput);
       endDateInput.value = '';
       endDateInput.required = false;
       endDateRequired.classList.add('hidden');
@@ -390,32 +402,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (eventDate && eventDate.trim() !== '') {
       // Single day event - enable event date, disable start/end
-      eventDateInput.disabled = false;
+      removeDisabledStyle(eventDateInput);
       eventDateInput.value = eventDate;
       eventDateInput.setAttribute('readonly', 'true');
       
-      startDateInput.disabled = true;
+      applyDisabledStyle(startDateInput);
       startDateInput.value = '';
       startDateInput.required = false;
       startDateRequired.classList.add('hidden');
       
-      endDateInput.disabled = true;
+      applyDisabledStyle(endDateInput);
       endDateInput.value = '';
       endDateInput.required = false;
       endDateRequired.classList.add('hidden');
       
     } else if (startDate && startDate.trim() !== '' && endDate && endDate.trim() !== '') {
       // Multi-day event - disable event date, enable start/end
-      eventDateInput.disabled = true;
+      applyDisabledStyle(eventDateInput);
       eventDateInput.value = '';
       
-      startDateInput.disabled = false;
+      removeDisabledStyle(startDateInput);
       startDateInput.value = startDate;
       startDateInput.setAttribute('readonly', 'true');
       startDateInput.required = true;
       startDateRequired.classList.remove('hidden');
       
-      endDateInput.disabled = false;
+      removeDisabledStyle(endDateInput);
       endDateInput.value = endDate;
       endDateInput.setAttribute('readonly', 'true');
       endDateInput.required = true;
@@ -423,13 +435,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
     } else {
       // No date data - disable all
-      eventDateInput.disabled = true;
+      applyDisabledStyle(eventDateInput);
       eventDateInput.value = '';
-      startDateInput.disabled = true;
+      applyDisabledStyle(startDateInput);
       startDateInput.value = '';
       startDateInput.required = false;
       startDateRequired.classList.add('hidden');
-      endDateInput.disabled = true;
+      applyDisabledStyle(endDateInput);
       endDateInput.value = '';
       endDateInput.required = false;
       endDateRequired.classList.add('hidden');

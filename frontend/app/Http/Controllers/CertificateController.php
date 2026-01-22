@@ -42,8 +42,9 @@ class CertificateController extends Controller
             'nama' => 'required|string|max:255',
             'tahun_akademik' => 'nullable|string|max:255',
             'penyelenggara' => 'required|string|max:255',
+            'tanggal_kegiatan' => 'nullable|date',
             'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date',
             'nama_kegiatan' => 'required|string|max:255',
             'nama_kegiatan_inggris' => 'nullable|string|max:255',
             'certificate_type' => 'required|in:internal,external',
@@ -56,6 +57,14 @@ class CertificateController extends Controller
         }
 
         $validated = $request->validate($rules);
+
+        // Validate that at least one date schema is provided
+        $hasEventDate = !empty($request->tanggal_kegiatan);
+        $hasDateRange = !empty($request->tanggal_mulai) && !empty($request->tanggal_selesai);
+        
+        if (!$hasEventDate && !$hasDateRange) {
+            return back()->withErrors(['tanggal' => 'Tanggal Kegiatan atau Tanggal Mulai dan Selesai harus diisi.'])->withInput();
+        }
 
         if ($isInternal) {
             $verificationResult = $this->verifyInternalCertificate(
@@ -72,6 +81,7 @@ class CertificateController extends Controller
                 'nama' => $request->nama,
                 'tahun_akademik' => $request->tahun_akademik,
                 'penyelenggara' => $request->penyelenggara,
+                'tanggal_kegiatan' => $request->tanggal_kegiatan,
                 'tanggal_mulai' => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
                 'nama_kegiatan' => $request->nama_kegiatan,
