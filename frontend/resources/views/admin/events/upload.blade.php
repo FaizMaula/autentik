@@ -149,7 +149,7 @@
                 name="event_date" 
                 id="eventDate"
                 value="{{ old('event_date') }}"
-                class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all"
+                class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -289,30 +289,42 @@ document.addEventListener('DOMContentLoaded', function() {
       // Enable single date, disable multi-day dates
       eventDateInput.disabled = false;
       eventDateInput.required = true;
+      eventDateInput.style.opacity = '';
+      eventDateInput.style.cursor = '';
       singleDateRequired.classList.remove('hidden');
       
       startDateInput.disabled = true;
       startDateInput.required = false;
       startDateInput.value = '';
+      startDateInput.style.opacity = '0.5';
+      startDateInput.style.cursor = 'not-allowed';
       startDateRequired.classList.add('hidden');
       
       endDateInput.disabled = true;
       endDateInput.required = false;
       endDateInput.value = '';
+      endDateInput.style.opacity = '0.5';
+      endDateInput.style.cursor = 'not-allowed';
       endDateRequired.classList.add('hidden');
     } else {
       // Disable single date, enable multi-day dates
       eventDateInput.disabled = true;
       eventDateInput.required = false;
       eventDateInput.value = '';
+      eventDateInput.style.opacity = '0.5';
+      eventDateInput.style.cursor = 'not-allowed';
       singleDateRequired.classList.add('hidden');
       
       startDateInput.disabled = false;
       startDateInput.required = true;
+      startDateInput.style.opacity = '';
+      startDateInput.style.cursor = '';
       startDateRequired.classList.remove('hidden');
       
       endDateInput.disabled = false;
       endDateInput.required = true;
+      endDateInput.style.opacity = '';
+      endDateInput.style.cursor = '';
       endDateRequired.classList.remove('hidden');
     }
   }
