@@ -283,6 +283,8 @@
     "admin.accessDenied": "Access denied. This page is for admins only.",
     "admin.searchPlaceholder": "Search name, event...",
     "admin.allStatus": "All Status",
+    "admin.academicYear": "Academic Year",
+    "admin.allAcademicYear": "All Academic Year",
     "admin.noSearchResults": "No results match your search",
 
     "results.similarityScore": "Similarity Score",

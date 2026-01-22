@@ -283,6 +283,8 @@
     "admin.accessDenied": "Akses ditolak. Halaman ini hanya untuk admin.",
     "admin.searchPlaceholder": "Cari nama, kegiatan...",
     "admin.allStatus": "Semua Status",
+    "admin.academicYear": "Tahun Akademik",
+    "admin.allAcademicYear": "Semua Tahun Akademik",
     "admin.noSearchResults": "Tidak ada hasil yang cocok dengan pencarian Anda",
 
     "results.similarityScore": "Skor Kemiripan",

@@ -152,5 +152,33 @@ class Certificate extends Model
             default => __('results.notVerified'),
         };
     }
+
+    /**
+     * Get the academic year display value.
+     * If tahun_akademik is filled, use it directly.
+     * If empty, generate from created_at date:
+     * - July-December (months 7-12) = Odd Semester = Year X/X+1
+     * - January-June (months 1-6) = Even Semester = Year (X-1)/X
+     */
+    public function getAcademicYearDisplayAttribute(): string
+    {
+        // If tahun_akademik has value, return as-is
+        if (!empty($this->tahun_akademik)) {
+            return $this->tahun_akademik;
+        }
+
+        // Generate from created_at
+        $date = $this->created_at ?? now();
+        $month = (int) $date->format('n'); // 1-12
+        $year = (int) $date->format('Y');
+
+        if ($month >= 7) {
+            // July-December: Odd Semester (Ganjil) = Year/Year+1
+            return $year . '/' . ($year + 1);
+        } else {
+            // January-June: Even Semester (Genap) = (Year-1)/Year
+            return ($year - 1) . '/' . $year;
+        }
+    }
 }
 

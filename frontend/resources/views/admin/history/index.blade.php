@@ -36,6 +36,21 @@
             </svg>
           </div>
           
+          <!-- Academic Year Filter Dropdown -->
+          <select 
+            id="academicYearFilter" 
+            class="px-4 py-2 rounded-lg glass-input text-sm focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all cursor-pointer"
+          >
+            <option value="">{{ __('admin.allAcademicYear') }}</option>
+            @php
+              // Get unique academic years from certificates
+              $academicYears = $certificates->pluck('academic_year_display')->unique()->filter()->sort()->reverse()->values();
+            @endphp
+            @foreach($academicYears as $year)
+              <option value="{{ $year }}">{{ $year }}</option>
+            @endforeach
+          </select>
+          
           <!-- Status Filter Dropdown -->
           <select 
             id="statusFilter" 
@@ -69,6 +84,7 @@
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.eventName') }}</th>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.organizer') }}</th>
                 <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('results.status') }}</th>
+                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.academicYear') }}</th>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.verifiedAt') }}</th>
                 <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.actions') }}</th>
               </tr>
@@ -85,7 +101,8 @@
                     data-nama="{{ strtolower($certificate->nama ?? '') }}"
                     data-kegiatan="{{ strtolower($certificate->nama_kegiatan ?? '') }}"
                     data-penyelenggara="{{ strtolower($certificate->penyelenggara ?? '') }}"
-                    data-status="{{ $statusKey }}">
+                    data-status="{{ $statusKey }}"
+                    data-academic-year="{{ $certificate->academic_year_display }}">
                   <td class="px-6 py-4 text-gray-600 dark:text-gray-400 row-number">
                     {{ ($certificates->currentPage() - 1) * $certificates->perPage() + $index + 1 }}
                   </td>
@@ -114,6 +131,11 @@
                       </span>
                     @endif
                   </td>
+                  <td class="px-6 py-4 text-center text-gray-600 dark:text-gray-400">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
+                      {{ $certificate->academic_year_display }}
+                    </span>
+                  </td>
                   <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
                     {{ $certificate->created_at->format('d M Y, H:i') }}
                   </td>
@@ -130,7 +152,7 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colspan="9" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     <div class="flex flex-col items-center gap-3">
                       <svg class="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -163,6 +185,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('searchInput');
   const statusFilter = document.getElementById('statusFilter');
+  const academicYearFilter = document.getElementById('academicYearFilter');
   const tableBody = document.getElementById('historyTableBody');
   const noResultsMessage = document.getElementById('noResultsMessage');
   const rows = tableBody.querySelectorAll('.history-row');
@@ -172,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function filterTable() {
     const searchTerm = searchInput.value.toLowerCase().trim();
     const statusValue = statusFilter.value;
+    const academicYearValue = academicYearFilter.value;
     let visibleCount = 0;
     let rowNumber = 1;
     
@@ -182,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const kegiatan = row.dataset.kegiatan || '';
       const penyelenggara = row.dataset.penyelenggara || '';
       const status = row.dataset.status || '';
+      const academicYear = row.dataset.academicYear || '';
       
       // Check search match (search across multiple fields)
       const searchMatch = !searchTerm || 
@@ -194,8 +219,11 @@ document.addEventListener('DOMContentLoaded', function() {
       // Check status match
       const statusMatch = !statusValue || status === statusValue;
       
+      // Check academic year match
+      const academicYearMatch = !academicYearValue || academicYear === academicYearValue;
+      
       // Show/hide row
-      if (searchMatch && statusMatch) {
+      if (searchMatch && statusMatch && academicYearMatch) {
         row.style.display = '';
         // Update row number
         const rowNumberCell = row.querySelector('.row-number');
@@ -210,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Show/hide no results message
-    if (visibleCount === 0 && (searchTerm || statusValue)) {
+    if (visibleCount === 0 && (searchTerm || statusValue || academicYearValue)) {
       noResultsMessage.classList.remove('hidden');
     } else {
       noResultsMessage.classList.add('hidden');
@@ -225,6 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Immediate filter on status change
   statusFilter.addEventListener('change', filterTable);
+  
+  // Immediate filter on academic year change
+  academicYearFilter.addEventListener('change', filterTable);
   
   // Auto-refresh when navigating back to this page (bfcache)
   // This ensures the status is always up-to-date after admin updates a certificate
