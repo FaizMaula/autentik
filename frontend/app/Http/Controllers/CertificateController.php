@@ -30,7 +30,7 @@ class CertificateController extends Controller
     public function create()
     {
         $events = Event::orderBy('event_name', 'asc')
-            ->get(['id', 'event_name', 'event_name_en', 'organizer', 'start_date', 'end_date']);
+            ->get(['id', 'event_name', 'event_name_en', 'organizer', 'academic_year', 'event_date', 'start_date', 'end_date']);
         return view('form', compact('events'));
     }
 
