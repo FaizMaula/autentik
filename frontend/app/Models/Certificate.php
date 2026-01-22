@@ -19,6 +19,7 @@ class Certificate extends Model
         'nama',
         'tahun_akademik',
         'penyelenggara',
+        'tanggal_kegiatan',
         'tanggal_mulai',
         'tanggal_selesai',
         'nama_kegiatan',

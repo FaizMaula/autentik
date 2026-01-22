@@ -21,14 +21,6 @@
           <p class="text-gray-600 dark:text-gray-300 mt-1">{{ __('admin.eventsSubtitle') }}</p>
         </div>
         <div class="flex gap-3">
-          <a href="{{ route('admin.events.template') }}" 
-             data-no-loading
-             class="px-4 py-2 bg-gray-200 dark:bg-[#3D3D3E] text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-[#4D4D4E] transition-all flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-            </svg>
-            {{ __('admin.downloadTemplate') }}
-          </a>
           <a href="{{ route('admin.events.create') }}" 
              class="px-4 py-2 bg-[#B62A2D] text-white rounded-lg font-medium hover:bg-[#d5575e] transition-all flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

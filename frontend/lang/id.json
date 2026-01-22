@@ -242,6 +242,7 @@
     "admin.participantCount": "Jumlah Peserta",
     "admin.uploadedAt": "Waktu Upload",
     "admin.actions": "Aksi",
+    "admin.type": "Tipe",
     "admin.participants": "peserta",
     "admin.viewDetails": "Lihat Detail",
     "admin.delete": "Hapus",

@@ -87,14 +87,24 @@
                           <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                             <i data-lucide="calendar" style="width:16px;height:16px" class="text-gray-400 dark:text-gray-500"></i>
                               <span>
+                                @if($history->tanggal_kegiatan)
+                                  {{ \Carbon\Carbon::parse($history->tanggal_kegiatan)->format('d M Y') }}
+                                @elseif($history->tanggal_mulai && $history->tanggal_selesai)
                                   {{ \Carbon\Carbon::parse($history->tanggal_mulai)->format('d M Y') }}
                                   -
                                   {{ \Carbon\Carbon::parse($history->tanggal_selesai)->format('d M Y') }}
+                                @else
+                                  -
+                                @endif
                               </span>
                           </div>
                           <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                             <i data-lucide="file" style="width:16px;height:16px" class="text-gray-400 dark:text-gray-500"></i>
-                            <span class="truncate">{{ basename($history->berkas) }}</span>
+                            @if($history->certificate_type === 'internal')
+                              <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">Internal</span>
+                            @else
+                              <span class="truncate">{{ basename($history->berkas) }}</span>
+                            @endif
                           </div>
                         </div>
 

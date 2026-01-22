@@ -242,6 +242,7 @@
     "admin.participantCount": "Participant Count",
     "admin.uploadedAt": "Uploaded At",
     "admin.actions": "Actions",
+    "admin.type": "Type",
     "admin.participants": "participants",
     "admin.viewDetails": "View Details",
     "admin.delete": "Delete",

@@ -83,7 +83,11 @@
                         </div>
                         <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                           <i data-lucide="file" style="width:16px;height:16px" class="text-gray-400"></i>
-                          <span class="truncate">{{ $history->file_name }}</span>
+                          @if($history->certificate_type === 'internal' || empty($history->berkas))
+                            <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full text-xs font-medium">Internal</span>
+                          @else
+                            <span class="truncate">{{ $history->file_name }}</span>
+                          @endif
                         </div>
                       </div>
 

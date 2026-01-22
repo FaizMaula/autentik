@@ -74,8 +74,9 @@ class CertificateController extends Controller
                 $request->penyelenggara
             );
         
-            // Dummy object (TIDAK disimpan ke DB)
-            $certificate = new Certificate([
+            // Save internal certificate to database for history tracking
+            $certificate = Certificate::create([
+                'user_id' => Auth::id(),
                 'certificate_type' => 'internal',
                 'nim' => $request->nim,
                 'nama' => $request->nama,
@@ -86,6 +87,7 @@ class CertificateController extends Controller
                 'tanggal_selesai' => $request->tanggal_selesai,
                 'nama_kegiatan' => $request->nama_kegiatan,
                 'nama_kegiatan_inggris' => $request->nama_kegiatan_inggris,
+                'berkas' => null, // Internal certificates don't have file upload
                 'final_score' => $verificationResult['verified'] ? 100 : 0,
                 'is_verified' => $verificationResult['verified'],
                 'internal_verified' => $verificationResult['verified'],

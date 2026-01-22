@@ -224,39 +224,39 @@
 
         {{-- Mobile Navigation - For both Internal and External --}}
         <div class="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full px-4">
-          <div class="glass-card-strong rounded-full px-4 py-3 flex items-center justify-center gap-4 shadow-2xl" id="resultsNavMobile">
+          <div class="glass-card-strong rounded-full px-3 py-2.5 flex items-center justify-center gap-2 sm:gap-3 shadow-2xl overflow-x-auto" id="resultsNavMobile">
             @if($isInternal)
             {{-- Internal Mobile Navigation --}}
-            <button type="button" data-slide-target="internal-status" class="results-nav-btn-mobile active w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="{{ $statusIcon }}" class="w-5 h-5 {{ $statusColor }}"></i>
+            <button type="button" data-slide-target="internal-status" class="results-nav-btn-mobile active w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="{{ $statusIcon }}" class="w-4 h-4 sm:w-5 sm:h-5 {{ $statusColor }}"></i>
             </button>
-            <button type="button" data-slide-target="internal-database" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="database" class="w-5 h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="internal-database" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="database" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
-            <button type="button" data-slide-target="internal-notes" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="file-check" class="w-5 h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="internal-notes" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="file-check" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
             @else
             {{-- External Mobile Navigation --}}
-            <button type="button" data-slide-target="overall" class="results-nav-btn-mobile active w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+            <button type="button" data-slide-target="overall" class="results-nav-btn-mobile active w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="check-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-green-500"></i>
             </button>
-            <button type="button" data-slide-target="ai" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="sparkles" class="w-5 h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="ai" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
-            <button type="button" data-slide-target="text" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="file-text" class="w-5 h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="text" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="file-text" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
-            <button type="button" data-slide-target="ocr" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="eye" class="w-5 h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="ocr" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="eye" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
-            <button type="button" data-slide-target="google" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-              <i data-lucide="search" class="w-5 h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="google" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="search" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
             {{-- View Certificate File Button (Mobile, External only) --}}
             @if(!empty($certificate->berkas))
-            <button type="button" id="viewCertificateBtnMobile" class="results-nav-btn-mobile w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-blue-100 dark:bg-blue-900/40">
-              <i data-lucide="file-scan" class="w-5 h-5 text-blue-500"></i>
+            <button type="button" id="viewCertificateBtnMobile" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-blue-100 dark:bg-blue-900/40 flex-shrink-0">
+              <i data-lucide="file-scan" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"></i>
             </button>
             @endif
             @endif
@@ -816,6 +816,122 @@
       @endif
     </div>
 
+    {{-- Certificate View Modal with Zoom/Drag --}}
+    @if(!$isInternal && !empty($certificate->berkas))
+    <div id="certificateModal" class="fixed inset-0 z-[100] hidden items-center justify-center" role="dialog" aria-modal="true">
+      {{-- Overlay --}}
+      <div id="certificateModalOverlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      
+      {{-- Modal Content --}}
+      <div class="relative z-10 w-full h-full md:h-auto md:max-h-[90vh] md:max-w-6xl md:mx-4 flex flex-col bg-white dark:bg-[#222223] md:rounded-2xl overflow-hidden shadow-2xl">
+        {{-- Header --}}
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#333334]">
+          <h3 class="text-lg font-semibold text-[#222223] dark:text-[#FEFEFE] flex items-center gap-2">
+            <i data-lucide="file-scan" class="w-5 h-5 text-blue-500"></i>
+            {{ __('results.viewCertificate') }}
+          </h3>
+          <div class="flex items-center gap-2">
+            {{-- Zoom Controls --}}
+            <button type="button" id="zoomOutBtn" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Zoom Out">
+              <i data-lucide="zoom-out" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <span id="zoomLevel" class="text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[3rem] text-center">100%</span>
+            <button type="button" id="zoomInBtn" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Zoom In">
+              <i data-lucide="zoom-in" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <button type="button" id="zoomResetBtn" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Reset">
+              <i data-lucide="maximize-2" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+            </button>
+            <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+            <button type="button" id="closeCertificateModal" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <i data-lucide="x" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
+            </button>
+          </div>
+        </div>
+        
+        {{-- Body: Image Left/Top, Data Right/Bottom --}}
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {{-- Certificate Image Viewer --}}
+          <div class="flex-1 lg:w-2/3 bg-gray-100 dark:bg-[#1a1a1b] overflow-hidden relative" id="imageViewerContainer">
+            <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
+              <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+            <div id="imageWrapper" class="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing overflow-hidden" style="min-height: 300px;">
+              <img id="certificateImage" src="" alt="Certificate" class="max-w-none select-none" style="transform-origin: center center;" draggable="false" />
+              {{-- PDF fallback --}}
+              <iframe id="certificatePdf" src="" class="hidden w-full h-full" style="min-height: 500px;"></iframe>
+            </div>
+          </div>
+          
+          {{-- Form Data Panel --}}
+          <div class="lg:w-1/3 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 overflow-y-auto bg-white dark:bg-[#222223]">
+            <div class="p-4 md:p-6 space-y-4">
+              <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                {{ __('results.submittedData') ?? 'Data yang Diajukan' }}
+              </h4>
+              
+              <div class="space-y-3">
+                {{-- Name --}}
+                <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('form.name') }}</p>
+                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nama ?? '-' }}</p>
+                </div>
+                
+                {{-- Event Name --}}
+                <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('form.eventName') }}</p>
+                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nama_kegiatan ?? '-' }}</p>
+                </div>
+                
+                {{-- Organizer --}}
+                <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('form.organizer') }}</p>
+                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->penyelenggara ?? '-' }}</p>
+                </div>
+                
+                {{-- Date --}}
+                <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('form.eventDate') }}</p>
+                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">
+                    @if($certificate->tanggal_kegiatan)
+                      {{ \Carbon\Carbon::parse($certificate->tanggal_kegiatan)->format('d M Y') }}
+                    @elseif($certificate->tanggal_mulai && $certificate->tanggal_selesai)
+                      {{ \Carbon\Carbon::parse($certificate->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($certificate->tanggal_selesai)->format('d M Y') }}
+                    @else
+                      -
+                    @endif
+                  </p>
+                </div>
+                
+                {{-- Academic Year --}}
+                <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('form.academicYear') }}</p>
+                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->academic_year_display ?? '-' }}</p>
+                </div>
+                
+                {{-- Status --}}
+                <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('results.status') }}</p>
+                  <div class="flex items-center gap-2">
+                    @if($status === 'verified')
+                      <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-medium rounded-full">{{ $statusLabel }}</span>
+                    @elseif($status === 'suspicious')
+                      <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-sm font-medium rounded-full">{{ $statusLabel }}</span>
+                    @else
+                      <span class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm font-medium rounded-full">{{ $statusLabel }}</span>
+                    @endif
+                    <span class="text-sm text-gray-600 dark:text-gray-400">({{ round($final_score) }}%)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    @endif
+
     @include('partials.footer')
   </div>
 </div>
@@ -1043,23 +1159,173 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Certificate File Viewer - Direct Open in New Tab
+  // Certificate File Viewer - Modal with Zoom/Drag
   @if(!$isInternal && !empty($certificate->berkas))
   const viewCertificateBtn = document.getElementById('viewCertificateBtn');
   const viewCertificateBtnMobile = document.getElementById('viewCertificateBtnMobile');
+  const certificateModal = document.getElementById('certificateModal');
+  const certificateModalOverlay = document.getElementById('certificateModalOverlay');
+  const closeCertificateModalBtn = document.getElementById('closeCertificateModal');
+  const certificateImage = document.getElementById('certificateImage');
+  const certificatePdf = document.getElementById('certificatePdf');
+  const imageWrapper = document.getElementById('imageWrapper');
+  const imageLoader = document.getElementById('imageLoader');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+  const zoomLevelDisplay = document.getElementById('zoomLevel');
   
   const certificateId = {{ $certificate->id ?? 0 }};
   const isAdmin = {{ isset($isAdmin) && $isAdmin ? 'true' : 'false' }};
   
-  async function openCertificateInNewTab() {
-    // Show loading state on button
-    const btn = event.currentTarget;
-    const originalContent = btn.innerHTML;
-    btn.innerHTML = '<div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center"><div class="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"></div></div>';
-    btn.disabled = true;
+  // Zoom/Pan State
+  let currentZoom = 1;
+  const minZoom = 0.5;
+  const maxZoom = 4;
+  const zoomStep = 0.25;
+  let isPanning = false;
+  let startX = 0, startY = 0;
+  let translateX = 0, translateY = 0;
+  let lastTranslateX = 0, lastTranslateY = 0;
+  
+  function updateZoomDisplay() {
+    zoomLevelDisplay.textContent = Math.round(currentZoom * 100) + '%';
+  }
+  
+  function updateImageTransform() {
+    certificateImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+  }
+  
+  function zoomIn() {
+    if (currentZoom < maxZoom) {
+      currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+      updateZoomDisplay();
+      updateImageTransform();
+    }
+  }
+  
+  function zoomOut() {
+    if (currentZoom > minZoom) {
+      currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+      updateZoomDisplay();
+      updateImageTransform();
+    }
+  }
+  
+  function resetZoom() {
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    lastTranslateX = 0;
+    lastTranslateY = 0;
+    updateZoomDisplay();
+    updateImageTransform();
+  }
+  
+  // Mouse/Touch Pan handlers
+  function startPan(e) {
+    if (currentZoom <= 1) return;
+    isPanning = true;
+    imageWrapper.style.cursor = 'grabbing';
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    startX = clientX - lastTranslateX;
+    startY = clientY - lastTranslateY;
+  }
+  
+  function doPan(e) {
+    if (!isPanning) return;
+    e.preventDefault();
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    translateX = clientX - startX;
+    translateY = clientY - startY;
+    updateImageTransform();
+  }
+  
+  function endPan() {
+    isPanning = false;
+    imageWrapper.style.cursor = 'grab';
+    lastTranslateX = translateX;
+    lastTranslateY = translateY;
+  }
+  
+  // Wheel zoom
+  function handleWheel(e) {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      zoomIn();
+    } else {
+      zoomOut();
+    }
+  }
+  
+  // Pinch zoom for touch
+  let initialPinchDistance = null;
+  let initialZoom = 1;
+  
+  function handleTouchStart(e) {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+      initialZoom = currentZoom;
+    } else if (e.touches.length === 1) {
+      startPan(e);
+    }
+  }
+  
+  function handleTouchMove(e) {
+    if (e.touches.length === 2 && initialPinchDistance) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const scale = distance / initialPinchDistance;
+      currentZoom = Math.min(maxZoom, Math.max(minZoom, initialZoom * scale));
+      updateZoomDisplay();
+      updateImageTransform();
+    } else if (e.touches.length === 1 && isPanning) {
+      doPan(e);
+    }
+  }
+  
+  function handleTouchEnd(e) {
+    if (e.touches.length < 2) {
+      initialPinchDistance = null;
+    }
+    if (e.touches.length === 0) {
+      endPan();
+    }
+  }
+  
+  function openCertificateModal() {
+    certificateModal.classList.remove('hidden');
+    certificateModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
     
+    // Show loader
+    imageLoader.classList.remove('hidden');
+    certificateImage.classList.add('hidden');
+    certificatePdf.classList.add('hidden');
+    
+    // Reset zoom/pan
+    resetZoom();
+    
+    // Fetch the certificate file
+    fetchCertificateFile();
+  }
+  
+  function closeCertificateModal() {
+    certificateModal.classList.add('hidden');
+    certificateModal.classList.remove('flex');
+    document.body.style.overflow = '';
+    certificateImage.src = '';
+    certificatePdf.src = '';
+  }
+  
+  async function fetchCertificateFile() {
     try {
-      // Use admin route if admin, otherwise regular user route
       const url = isAdmin 
         ? `/admin/certificate/${certificateId}/file-url`
         : `/certificate/${certificateId}/file-url`;
@@ -1074,25 +1340,70 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       
       if (data.success && data.url) {
-        // Open in new tab
-        window.open(data.url, '_blank');
+        const fileUrl = data.url;
+        const isPdf = fileUrl.toLowerCase().includes('.pdf') || data.mime_type === 'application/pdf';
+        
+        if (isPdf) {
+          // Show PDF in iframe
+          certificatePdf.src = fileUrl;
+          certificatePdf.classList.remove('hidden');
+          certificateImage.classList.add('hidden');
+          imageLoader.classList.add('hidden');
+        } else {
+          // Show image
+          certificateImage.onload = function() {
+            imageLoader.classList.add('hidden');
+            certificateImage.classList.remove('hidden');
+          };
+          certificateImage.onerror = function() {
+            imageLoader.classList.add('hidden');
+            alert('{{ __("results.fileUrlError") }}');
+            closeCertificateModal();
+          };
+          certificateImage.src = fileUrl;
+        }
       } else {
         alert(data.message || '{{ __("results.fileUrlError") }}');
+        closeCertificateModal();
       }
     } catch (error) {
       console.error('Error fetching certificate file:', error);
       alert('{{ __("results.fileUrlError") }}');
-    } finally {
-      // Restore button
-      btn.innerHTML = originalContent;
-      btn.disabled = false;
-      if (window.lucide?.createIcons) window.lucide.createIcons();
+      closeCertificateModal();
     }
   }
   
-  // Event listeners
-  if (viewCertificateBtn) viewCertificateBtn.addEventListener('click', openCertificateInNewTab);
-  if (viewCertificateBtnMobile) viewCertificateBtnMobile.addEventListener('click', openCertificateInNewTab);
+  // Event listeners for modal
+  if (viewCertificateBtn) viewCertificateBtn.addEventListener('click', openCertificateModal);
+  if (viewCertificateBtnMobile) viewCertificateBtnMobile.addEventListener('click', openCertificateModal);
+  if (closeCertificateModalBtn) closeCertificateModalBtn.addEventListener('click', closeCertificateModal);
+  if (certificateModalOverlay) certificateModalOverlay.addEventListener('click', closeCertificateModal);
+  
+  // Zoom controls
+  if (zoomInBtn) zoomInBtn.addEventListener('click', zoomIn);
+  if (zoomOutBtn) zoomOutBtn.addEventListener('click', zoomOut);
+  if (zoomResetBtn) zoomResetBtn.addEventListener('click', resetZoom);
+  
+  // Pan events for mouse
+  if (imageWrapper) {
+    imageWrapper.addEventListener('mousedown', startPan);
+    imageWrapper.addEventListener('mousemove', doPan);
+    imageWrapper.addEventListener('mouseup', endPan);
+    imageWrapper.addEventListener('mouseleave', endPan);
+    imageWrapper.addEventListener('wheel', handleWheel, { passive: false });
+    
+    // Touch events
+    imageWrapper.addEventListener('touchstart', handleTouchStart, { passive: false });
+    imageWrapper.addEventListener('touchmove', handleTouchMove, { passive: false });
+    imageWrapper.addEventListener('touchend', handleTouchEnd);
+  }
+  
+  // Close modal on escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !certificateModal.classList.contains('hidden')) {
+      closeCertificateModal();
+    }
+  });
   @endif
 
   // Admin Status Update Logic
