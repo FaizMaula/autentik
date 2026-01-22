@@ -118,6 +118,8 @@
     "form.nimHint": "NIM digunakan untuk validasi data peserta kegiatan internal",
     "form.selectEvent": "-- Pilih Kegiatan --",
     "form.eventNameInternalHint": "Pilih kegiatan dari daftar kegiatan internal yang terdaftar",
+    "form.internalVerificationTitle": "Verifikasi Sertifikat Internal",
+    "form.internalVerificationDesc": "Form ini untuk verifikasi sertifikat kegiatan internal kampus/institusi. Cukup pilih kegiatan, isi nama dan NIM Anda - field lainnya akan terisi otomatis.",
 
     "results.title": "Hasil Verifikasi",
     "results.subtitle": "Berikut adalah analisis lengkap verifikasi sertifikat Anda",

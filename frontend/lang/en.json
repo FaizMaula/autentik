@@ -118,6 +118,8 @@
     "form.nimHint": "Student ID is used to validate internal event participant data",
     "form.selectEvent": "-- Select Event --",
     "form.eventNameInternalHint": "Select an event from the list of registered internal events",
+    "form.internalVerificationTitle": "Internal Certificate Verification",
+    "form.internalVerificationDesc": "This form is for verifying internal campus/institution event certificates. Just select an event, fill in your name and NIM - other fields will auto-fill.",
 
     "results.title": "Verification Results",
     "results.subtitle": "Here is the complete analysis of your certificate verification",

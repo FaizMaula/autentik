@@ -83,53 +83,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- LEFT COLUMN -->
           <div id="leftColumn" class="space-y-5">
-            <!-- Name -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                {{ __('form.name') }} <span class="text-red-500">*</span>
-              </label>
-              <input type="text" name="nama" placeholder="{{ __('form.namePlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
-            </div>
-
-            <!-- NIM Field (Only for Internal) -->
-            <div id="nimField" class="transition-all duration-300">
-              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                {{ __('form.nim') }} <span class="text-red-500">*</span>
-              </label>
-              <input type="text" name="nim" id="nimInput" placeholder="{{ __('form.nimPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('form.nimHint') }}</p>
-            </div>
-
-            <!-- Academic Year + Organizer (2 columns) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- Academic Year -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.academicYear') }}</label>
-                <input type="text" name="tahun_akademik" placeholder="{{ __('form.academicYearPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
-              </div>
-
-              <!-- Organizer -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {{ __('form.organizer') }} <span class="text-red-500">*</span>
-                </label>
-                <input type="text" name="penyelenggara" placeholder="{{ __('form.organizerPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
-              </div>
-            </div>
-
-            <!-- Start Date + End Date (2 columns) - Movable for Internal -->
-            <div id="dateFieldsWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.startDate') }} <span class="text-red-500">*</span></label>
-                <input type="date" name="tanggal_mulai" id="startDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.endDate') }} <span class="text-red-500">*</span></label>
-                <input type="date" name="tanggal_selesai" id="endDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
-              </div>
-            </div>
-
-            <!-- Event Name (ID) - Dropdown for Internal, Text Input for External - Movable for Internal -->
+            <!-- Event Name (ID) - Dropdown for Internal, Text Input for External -->
             <div id="eventNameFieldsWrapper">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.eventName') }} <span class="text-red-500">*</span></label>
               
@@ -141,6 +95,8 @@
                     <option value="{{ $event->event_name }}" 
                             data-event-name-en="{{ $event->event_name_en }}"
                             data-organizer="{{ $event->organizer }}"
+                            data-academic-year="{{ $event->academic_year }}"
+                            data-event-date="{{ $event->event_date ? $event->event_date->format('Y-m-d') : '' }}"
                             data-start-date="{{ $event->start_date ? $event->start_date->format('Y-m-d') : '' }}"
                             data-end-date="{{ $event->end_date ? $event->end_date->format('Y-m-d') : '' }}">
                       {{ $event->event_name }}
@@ -156,20 +112,69 @@
               </div>
             </div>
 
-            <!-- Event Name (EN) - Part of movable wrapper -->
-            <div id="eventNameEngWrapper" class="mt-5">
+            <!-- Event Name (EN) -->
+            <div id="eventNameEngWrapper">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.eventNameEng') }}</label>
               <input type="text" name="nama_kegiatan_inggris" id="eventNameEng" placeholder="{{ __('form.eventNameEngPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
+            </div>
+
+            <!-- Academic Year + Organizer (2 columns) -->
+            <div id="academicOrganizerWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Academic Year -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.academicYear') }}</label>
+                <input type="text" name="tahun_akademik" id="academicYearInput" placeholder="{{ __('form.academicYearPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
+              </div>
+
+              <!-- Organizer -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  {{ __('form.organizer') }} <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="penyelenggara" id="organizerInput" placeholder="{{ __('form.organizerPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
+              </div>
+            </div>
+
+            <!-- Event Date (Single Day) - For Internal -->
+            <div id="eventDateWrapper" class="hidden">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.eventDate') }}</label>
+              <input type="date" name="tanggal_kegiatan" id="eventDateInput" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
+            </div>
+
+            <!-- Start Date + End Date (2 columns) -->
+            <div id="dateFieldsWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.startDate') }} <span class="text-red-500" id="startDateRequired">*</span></label>
+                <input type="date" name="tanggal_mulai" id="startDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed" required />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.endDate') }} <span class="text-red-500" id="endDateRequired">*</span></label>
+                <input type="date" name="tanggal_selesai" id="endDate" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed" required />
+              </div>
+            </div>
+
+            <!-- Name -->
+            <div id="nameFieldWrapper">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                {{ __('form.name') }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="nama" id="nameInput" placeholder="{{ __('form.namePlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" required />
+            </div>
+
+            <!-- NIM Field (Only for Internal) -->
+            <div id="nimField" class="transition-all duration-300">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                {{ __('form.nim') }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="nim" id="nimInput" placeholder="{{ __('form.nimPlaceholder') }}" class="w-full px-4 py-3 rounded-lg glass-input focus:ring-2 focus:ring-[#B62A2D] focus:border-transparent transition-all" />
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('form.nimHint') }}</p>
             </div>
           </div>
 
           <!-- RIGHT COLUMN -->
           <div id="rightColumn" class="space-y-5">
-            <!-- Container for Internal-only fields (moved from left column) -->
-            <div id="internalFieldsContainer" class="space-y-5 hidden"></div>
-            
             <!-- File Upload (External Only) -->
-            <div id="fileUploadSection">
+            <div id="fileUploadSection" class="hidden">
               <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('form.fileUpload') }} <span class="text-red-500">*</span></label>
               <div id="fileDropZone" class="relative glass-input border-2 border-dashed border-[#B62A2D]/30 rounded-2xl p-6 text-center hover:border-[#B62A2D] transition-all duration-300 hover:bg-white/80 dark:hover:bg-[#333334]/80">
                 <!-- Drag-over overlay -->
@@ -185,6 +190,19 @@
                 </div>
                 <div id="filePreviewContainer" class="mt-4"></div>
                 <button type="button" id="removeFileButton" class="hidden mt-4 px-4 py-2 bg-[#B62A2D] text-white rounded-lg hover:bg-[#9a2426] transition-colors mx-auto">{{ __('form.removeFile') }}</button>
+              </div>
+            </div>
+
+            <!-- Internal Info Card (Only for Internal) -->
+            <div id="internalInfoCard" class="glass-card rounded-xl p-5 border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                  <h4 class="font-semibold text-blue-800 dark:text-blue-300 text-sm mb-1">{{ __('form.internalVerificationTitle') }}</h4>
+                  <p class="text-xs text-blue-700 dark:text-blue-400">{{ __('form.internalVerificationDesc') }}</p>
+                </div>
               </div>
             </div>
 
@@ -241,6 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const fileInput = document.getElementById('fileInput');
   const nimField = document.getElementById('nimField');
   const nimInput = document.getElementById('nimInput');
+  const nameInput = document.getElementById('nameInput');
   const certificateTypeRadios = document.querySelectorAll('input[name="certificate_type"]');
   
   // Event name elements
@@ -249,20 +268,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventNameDropdown = document.getElementById('eventNameDropdown');
   const eventNameText = document.getElementById('eventNameText');
   const eventNameEng = document.getElementById('eventNameEng');
-  const organizerInput = document.querySelector('input[name="penyelenggara"]');
+  const organizerInput = document.getElementById('organizerInput');
+  const academicYearInput = document.getElementById('academicYearInput');
+  
+  // Date elements
+  const eventDateWrapper = document.getElementById('eventDateWrapper');
+  const eventDateInput = document.getElementById('eventDateInput');
+  const dateFieldsWrapper = document.getElementById('dateFieldsWrapper');
   const startDateInput = document.getElementById('startDate');
   const endDateInput = document.getElementById('endDate');
+  const startDateRequired = document.getElementById('startDateRequired');
+  const endDateRequired = document.getElementById('endDateRequired');
   
   // File upload section (only for External)
   const fileUploadSection = document.getElementById('fileUploadSection');
-  
-  // Layout elements for Internal fields relocation
-  const leftColumn = document.getElementById('leftColumn');
-  const rightColumn = document.getElementById('rightColumn');
-  const internalFieldsContainer = document.getElementById('internalFieldsContainer');
-  const dateFieldsWrapper = document.getElementById('dateFieldsWrapper');
-  const eventNameFieldsWrapper = document.getElementById('eventNameFieldsWrapper');
-  const eventNameEngWrapper = document.getElementById('eventNameEngWrapper');
+  const internalInfoCard = document.getElementById('internalInfoCard');
   
   // Field label mapping for display names
   const fieldLabels = {
@@ -271,12 +291,13 @@ document.addEventListener('DOMContentLoaded', function() {
     'penyelenggara': '{{ __("form.organizer") }}',
     'tanggal_mulai': '{{ __("form.startDate") }}',
     'tanggal_selesai': '{{ __("form.endDate") }}',
+    'tanggal_kegiatan': '{{ __("form.eventDate") }}',
     'nama_kegiatan': '{{ __("form.eventName") }}',
     'confirmData': '{{ __("form.confirmData") }}',
     'fileInput': '{{ __("form.fileUpload") }}'
   };
 
-  // Toggle NIM field and Event Name field based on certificate type
+  // Toggle fields based on certificate type
   function toggleFieldsBasedOnType() {
     const selectedType = document.querySelector('input[name="certificate_type"]:checked').value;
     
@@ -293,21 +314,22 @@ document.addEventListener('DOMContentLoaded', function() {
       eventNameText.removeAttribute('required');
       eventNameText.removeAttribute('name');
       
-      // Hide file upload for Internal (verification via database only)
+      // Hide file upload, show internal info card
       fileUploadSection.classList.add('hidden');
+      internalInfoCard.classList.remove('hidden');
       fileInput.removeAttribute('required');
-      // Clear any selected file
       fileInput.value = '';
-      const dropZone = document.getElementById('fileDropZone');
-      if (dropZone) removeErrorState(dropZone);
       
-      // Move date and event fields to right column for Internal layout
-      if (dateFieldsWrapper && eventNameFieldsWrapper && eventNameEngWrapper && internalFieldsContainer) {
-        internalFieldsContainer.classList.remove('hidden');
-        internalFieldsContainer.appendChild(dateFieldsWrapper);
-        internalFieldsContainer.appendChild(eventNameFieldsWrapper);
-        internalFieldsContainer.appendChild(eventNameEngWrapper);
-      }
+      // Show event date wrapper for internal
+      eventDateWrapper.classList.remove('hidden');
+      
+      // Reset date fields based on selected event
+      handleEventDateToggle();
+      
+      // Make organizer, academic year, and dates readonly for internal
+      if (organizerInput) organizerInput.setAttribute('readonly', 'true');
+      if (academicYearInput) academicYearInput.setAttribute('readonly', 'true');
+      
     } else {
       // Hide NIM field
       nimField.classList.add('hidden');
@@ -323,36 +345,101 @@ document.addEventListener('DOMContentLoaded', function() {
       eventNameText.setAttribute('required', 'true');
       eventNameText.setAttribute('name', 'nama_kegiatan');
       
-      // Show file upload for External (OCR/AI verification)
+      // Show file upload, hide internal info card
       fileUploadSection.classList.remove('hidden');
+      internalInfoCard.classList.add('hidden');
       fileInput.setAttribute('required', 'true');
       
-      // Move date and event fields back to left column for External layout
-      if (dateFieldsWrapper && eventNameFieldsWrapper && eventNameEngWrapper && leftColumn && internalFieldsContainer) {
-        internalFieldsContainer.classList.add('hidden');
-        // Find the NIM field to insert after
-        const nimFieldElement = document.getElementById('nimField');
-        const academicYearField = nimFieldElement.nextElementSibling;
-        // Insert date fields after academic year/organizer row
-        if (academicYearField && academicYearField.nextSibling) {
-          leftColumn.insertBefore(dateFieldsWrapper, academicYearField.nextSibling);
-          leftColumn.insertBefore(eventNameFieldsWrapper, dateFieldsWrapper.nextSibling);
-          leftColumn.insertBefore(eventNameEngWrapper, eventNameFieldsWrapper.nextSibling);
-        } else {
-          leftColumn.appendChild(dateFieldsWrapper);
-          leftColumn.appendChild(eventNameFieldsWrapper);
-          leftColumn.appendChild(eventNameEngWrapper);
-        }
-      }
+      // Hide event date wrapper for external
+      eventDateWrapper.classList.add('hidden');
       
-      // Clear auto-filled fields when switching to external
+      // Enable all date fields for external
+      startDateInput.disabled = false;
+      startDateInput.required = true;
+      endDateInput.disabled = false;
+      endDateInput.required = true;
+      eventDateInput.disabled = true;
+      
+      // Make fields editable for external
+      if (organizerInput) organizerInput.removeAttribute('readonly');
+      if (academicYearInput) academicYearInput.removeAttribute('readonly');
+      eventNameEng.removeAttribute('readonly');
+      
+      // Clear auto-filled fields
       eventNameDropdown.value = '';
       eventNameEng.value = '';
-      eventNameEng.removeAttribute('readonly');
-      if (organizerInput) {
-        organizerInput.value = '';
-        organizerInput.removeAttribute('readonly');
-      }
+      if (organizerInput) organizerInput.value = '';
+      if (academicYearInput) academicYearInput.value = '';
+      startDateInput.value = '';
+      endDateInput.value = '';
+      eventDateInput.value = '';
+    }
+  }
+
+  // Handle date field toggle based on event data
+  function handleEventDateToggle() {
+    const selectedOption = eventNameDropdown.options[eventNameDropdown.selectedIndex];
+    
+    if (!selectedOption || !selectedOption.value) {
+      // No event selected - disable all date fields
+      eventDateInput.disabled = true;
+      eventDateInput.value = '';
+      startDateInput.disabled = true;
+      startDateInput.value = '';
+      startDateInput.required = false;
+      endDateInput.disabled = true;
+      endDateInput.value = '';
+      endDateInput.required = false;
+      return;
+    }
+    
+    const eventDate = selectedOption.getAttribute('data-event-date');
+    const startDate = selectedOption.getAttribute('data-start-date');
+    const endDate = selectedOption.getAttribute('data-end-date');
+    
+    if (eventDate) {
+      // Single day event - enable event date, disable start/end
+      eventDateInput.disabled = false;
+      eventDateInput.value = eventDate;
+      eventDateInput.setAttribute('readonly', 'true');
+      
+      startDateInput.disabled = true;
+      startDateInput.value = '';
+      startDateInput.required = false;
+      startDateRequired.classList.add('hidden');
+      
+      endDateInput.disabled = true;
+      endDateInput.value = '';
+      endDateInput.required = false;
+      endDateRequired.classList.add('hidden');
+      
+    } else if (startDate && endDate) {
+      // Multi-day event - disable event date, enable start/end
+      eventDateInput.disabled = true;
+      eventDateInput.value = '';
+      
+      startDateInput.disabled = false;
+      startDateInput.value = startDate;
+      startDateInput.setAttribute('readonly', 'true');
+      startDateInput.required = true;
+      startDateRequired.classList.remove('hidden');
+      
+      endDateInput.disabled = false;
+      endDateInput.value = endDate;
+      endDateInput.setAttribute('readonly', 'true');
+      endDateInput.required = true;
+      endDateRequired.classList.remove('hidden');
+      
+    } else {
+      // No date data - disable all
+      eventDateInput.disabled = true;
+      eventDateInput.value = '';
+      startDateInput.disabled = true;
+      startDateInput.value = '';
+      startDateInput.required = false;
+      endDateInput.disabled = true;
+      endDateInput.value = '';
+      endDateInput.required = false;
     }
   }
   
@@ -368,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
         eventNameEng.setAttribute('readonly', 'true');
       } else {
         eventNameEng.value = '';
-        eventNameEng.removeAttribute('readonly');
+        eventNameEng.setAttribute('readonly', 'true');
       }
       
       // Auto-fill Organizer
@@ -378,28 +465,24 @@ document.addEventListener('DOMContentLoaded', function() {
         organizerInput.setAttribute('readonly', 'true');
       }
       
-      // Auto-fill Start Date
-      const startDateValue = selectedOption.getAttribute('data-start-date');
-      if (startDateValue && startDateInput) {
-        startDateInput.value = startDateValue;
+      // Auto-fill Academic Year
+      const academicYearValue = selectedOption.getAttribute('data-academic-year');
+      if (academicYearValue && academicYearInput) {
+        academicYearInput.value = academicYearValue;
+        academicYearInput.setAttribute('readonly', 'true');
       }
       
-      // Auto-fill End Date
-      const endDateValue = selectedOption.getAttribute('data-end-date');
-      if (endDateValue && endDateInput) {
-        endDateInput.value = endDateValue;
-      }
+      // Handle date toggle
+      handleEventDateToggle();
       
       // Remove error state from dropdown
       removeErrorState(eventNameDropdown);
     } else {
       // Clear auto-filled fields
       eventNameEng.value = '';
-      eventNameEng.removeAttribute('readonly');
-      if (organizerInput) {
-        organizerInput.value = '';
-        organizerInput.removeAttribute('readonly');
-      }
+      if (organizerInput) organizerInput.value = '';
+      if (academicYearInput) academicYearInput.value = '';
+      handleEventDateToggle();
     }
   });
 
