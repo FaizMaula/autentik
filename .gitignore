@@ -22,6 +22,7 @@
 # Monorepo additions
 frontend/vendor/
 frontend/public/build/
+frontend/public/hot
 frontend/node_modules/
 frontend/dist/
 # (opsional) jika nanti membuat API terpisah di backend/
