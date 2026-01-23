@@ -39,6 +39,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Get certificate file URL for viewing (API endpoint)
     Route::get('/certificate/{id}/file-url', [EventController::class, 'getCertificateFileUrl'])->name('certificate.file-url');
     
+    // Proxy endpoint to serve certificate file directly (bypasses CORS/CSP)
+    Route::get('/certificate/{id}/file', [EventController::class, 'getCertificateFileProxy'])->name('certificate.file-proxy');
+    
     // Update certificate status (admin only - for suspicious certificates)
     Route::post('/certificate/{id}/update-status', [EventController::class, 'updateCertificateStatus'])->name('certificate.update-status');
 });

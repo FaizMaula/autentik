@@ -48,6 +48,8 @@ Route::get('certificate/api/result/{id}', [CertificateController::class, 'apiRes
 Route::middleware(['auth'])->group(function () {
     Route::get('certificate/{id}/file-url', [CertificateController::class, 'getCertificateFileUrl'])
         ->name('certificate.file-url');
+    Route::get('certificate/{id}/file', [CertificateController::class, 'getCertificateFileProxy'])
+        ->name('certificate.file-proxy');
 });
 
 Route::prefix('api')->group(function () {

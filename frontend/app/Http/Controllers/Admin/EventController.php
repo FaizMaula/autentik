@@ -413,6 +413,38 @@ class EventController extends Controller
     }
 
     /**
+     * Proxy endpoint to serve certificate file directly (bypasses CORS/CSP issues)
+     */
+    public function getCertificateFileProxy($id)
+    {
+        $certificate = Certificate::findOrFail($id);
+
+        if (empty($certificate->berkas)) {
+            abort(404, __('results.noFileUploaded'));
+        }
+
+        try {
+            $disk = \Illuminate\Support\Facades\Storage::disk('r2');
+            
+            if (!$disk->exists($certificate->berkas)) {
+                abort(404, __('results.fileNotFound'));
+            }
+
+            $fileContent = $disk->get($certificate->berkas);
+            $mimeType = $disk->mimeType($certificate->berkas) ?: 'application/octet-stream';
+            $filename = basename($certificate->berkas);
+
+            return response($fileContent, 200)
+                ->header('Content-Type', $mimeType)
+                ->header('Content-Disposition', 'inline; filename="' . $filename . '"')
+                ->header('Cache-Control', 'private, max-age=3600');
+        } catch (\Exception $e) {
+            \Log::error('Failed to proxy certificate file: ' . $e->getMessage());
+            abort(500, __('results.fileUrlError'));
+        }
+    }
+
+    /**
      * Update certificate verification status (admin only).
      * Only allowed for certificates with 'suspicious' status.
      */

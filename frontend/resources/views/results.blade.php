@@ -1328,13 +1328,19 @@ document.addEventListener('DOMContentLoaded', () => {
   
   async function fetchCertificateFile() {
     try {
-      const url = isAdmin 
+      // Use proxy URL to avoid CORS/CSP issues - server fetches from R2 and serves directly
+      const proxyUrl = isAdmin 
+        ? `/admin/certificate/${certificateId}/file`
+        : `/certificate/${certificateId}/file`;
+      
+      // Also fetch metadata to know file type
+      const metaUrl = isAdmin 
         ? `/admin/certificate/${certificateId}/file-url`
         : `/certificate/${certificateId}/file-url`;
       
-      console.log('Fetching certificate URL from:', url);
+      console.log('Fetching certificate metadata from:', metaUrl);
       
-      const response = await fetch(url, {
+      const response = await fetch(metaUrl, {
         headers: {
           'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
@@ -1352,55 +1358,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       console.log('Response data:', data);
       
-      if (data.success && data.url) {
-        const fileUrl = data.url;
-        console.log('File URL:', fileUrl);
+      if (data.success) {
+        const isPdf = data.file_type === 'pdf';
         
-        const isPdf = fileUrl.toLowerCase().includes('.pdf') || data.file_type === 'pdf';
+        console.log('File type:', data.file_type, 'Is PDF:', isPdf);
+        console.log('Using proxy URL:', proxyUrl);
         
         if (isPdf) {
-          // PDF cannot be displayed in iframe due to CSP - show open in new tab button
+          // For PDF, use iframe with proxy URL (served from same origin, no CSP issues)
           imageLoader.classList.add('hidden');
           certificateImage.classList.add('hidden');
-          certificatePdf.classList.add('hidden');
-          imageWrapper.innerHTML = `
-            <div class="text-center p-8">
-              <i data-lucide="file-text" class="w-20 h-20 text-blue-500 mx-auto mb-4"></i>
-              <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg mb-2">{{ __("results.pdfDocument") ?? 'Dokumen PDF' }}</p>
-              <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">{{ __("results.pdfCannotBeDisplayed") }}</p>
-              <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" 
-                 class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors">
-                <i data-lucide="external-link" class="w-5 h-5"></i>
-                {{ __("results.openInNewTab") }}
-              </a>
-            </div>
-          `;
-          if (typeof lucide !== 'undefined') lucide.createIcons();
+          certificatePdf.src = proxyUrl;
+          certificatePdf.classList.remove('hidden');
         } else {
-          // Show image - use crossorigin anonymous to avoid CORS issues
-          certificateImage.crossOrigin = 'anonymous';
+          // Show image using proxy URL (served from same origin, no CORS issues)
           certificateImage.onload = function() {
-            console.log('Image loaded successfully');
+            console.log('Image loaded successfully via proxy');
             imageLoader.classList.add('hidden');
             certificateImage.classList.remove('hidden');
           };
           certificateImage.onerror = function(e) {
             console.error('Image load error:', e);
-            // Try without crossorigin
-            certificateImage.crossOrigin = null;
-            const retryUrl = fileUrl + (fileUrl.includes('?') ? '&' : '?') + 'retry=1';
-            if (!certificateImage.src.includes('retry=1')) {
-              console.log('Retrying without crossorigin...');
-              certificateImage.src = retryUrl;
-              return;
-            }
             imageLoader.classList.add('hidden');
             // Show error message with open in new tab option
             imageWrapper.innerHTML = `
               <div class="text-center p-8">
                 <i data-lucide="image-off" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
                 <p class="text-gray-600 dark:text-gray-400 font-medium mb-4">{{ __("results.imageLoadError") ?? 'Gagal memuat gambar' }}</p>
-                <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" 
+                <a href="${proxyUrl}" target="_blank" rel="noopener noreferrer" 
                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors text-sm">
                   <i data-lucide="external-link" class="w-4 h-4"></i>
                   {{ __("results.openInNewTab") }}
@@ -1409,10 +1394,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             if (typeof lucide !== 'undefined') lucide.createIcons();
           };
-          certificateImage.src = fileUrl;
+          certificateImage.src = proxyUrl;
         }
       } else {
-        console.error('Failed to get file URL:', data.message);
+        console.error('Failed to get file info:', data.message);
         imageLoader.classList.add('hidden');
         imageWrapper.innerHTML = `
           <div class="text-center p-8">

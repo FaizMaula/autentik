@@ -194,6 +194,7 @@
     "results.restartButton": "Verifikasi Ulang",
     "results.viewCertificate": "Lihat Sertifikat",
     "results.noFileUploaded": "Tidak ada file yang diunggah untuk sertifikat ini",
+    "results.fileNotFound": "File sertifikat tidak ditemukan",
     "results.fileUrlError": "Gagal memuat file sertifikat",
     "results.imageLoadError": "Gagal memuat gambar sertifikat",
     "results.tryAgainLater": "Silakan coba lagi nanti",
