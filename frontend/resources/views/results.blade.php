@@ -1217,13 +1217,14 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Zoom/Pan State
   let currentZoom = 1;
-  const minZoom = 0.5;
+  const minZoom = 0.1; // Allow very small zoom for large images
   const maxZoom = 4;
   const zoomStep = 0.25;
   let isPanning = false;
   let startX = 0, startY = 0;
   let translateX = 0, translateY = 0;
   let lastTranslateX = 0, lastTranslateY = 0;
+  let fitZoom = 1; // Store the fit-to-screen zoom level
   
   function updateZoomDisplay() {
     zoomLevelDisplay.textContent = Math.round(currentZoom * 100) + '%';
@@ -1231,6 +1232,35 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function updateImageTransform() {
     certificateImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+  }
+  
+  // Calculate zoom level to fit image in container
+  function calculateFitZoom() {
+    if (!certificateImage.naturalWidth || !certificateImage.naturalHeight) return 1;
+    
+    const container = certificateImagePanel || imageWrapper.parentElement;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const imageWidth = certificateImage.naturalWidth;
+    const imageHeight = certificateImage.naturalHeight;
+    
+    // Calculate scale to fit both dimensions with some padding
+    const scaleX = (containerWidth * 0.95) / imageWidth;
+    const scaleY = (containerHeight * 0.95) / imageHeight;
+    
+    // Use the smaller scale to ensure entire image fits
+    return Math.min(scaleX, scaleY, 1); // Cap at 1 (100%) - don't enlarge small images
+  }
+  
+  function fitToScreen() {
+    fitZoom = calculateFitZoom();
+    currentZoom = fitZoom;
+    translateX = 0;
+    translateY = 0;
+    lastTranslateX = 0;
+    lastTranslateY = 0;
+    updateZoomDisplay();
+    updateImageTransform();
   }
   
   function zoomIn() {
@@ -1250,18 +1280,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   function resetZoom() {
-    currentZoom = 1;
-    translateX = 0;
-    translateY = 0;
-    lastTranslateX = 0;
-    lastTranslateY = 0;
-    updateZoomDisplay();
-    updateImageTransform();
+    // Reset to fit-to-screen instead of 100%
+    fitToScreen();
   }
   
   // Mouse/Touch Pan handlers
   function startPan(e) {
-    if (currentZoom <= 1) return;
     isPanning = true;
     imageWrapper.style.cursor = 'grabbing';
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
@@ -1433,8 +1457,15 @@ document.addEventListener('DOMContentLoaded', () => {
           // Show image using proxy URL (served from same origin, no CORS issues)
           certificateImage.onload = function() {
             console.log('Image loaded successfully via proxy');
+            console.log('Image natural size:', certificateImage.naturalWidth, 'x', certificateImage.naturalHeight);
             imageLoader.classList.add('hidden');
             certificateImage.classList.remove('hidden');
+            
+            // Auto fit-to-screen after image loads
+            setTimeout(() => {
+              fitToScreen();
+              console.log('Fit zoom applied:', fitZoom);
+            }, 50);
           };
           certificateImage.onerror = function(e) {
             console.error('Image load error:', e);
