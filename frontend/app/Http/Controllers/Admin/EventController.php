@@ -210,7 +210,22 @@ class EventController extends Controller
         // Fetch participant data for internal certificates
         $participantData = null;
         if ($certificate->certificate_type === 'internal' && $certificate->nim) {
+            // Try exact match first, then fuzzy match
             $event = Event::where('event_name', $certificate->nama_kegiatan)->first();
+            
+            // If not found, try case-insensitive LIKE search
+            if (!$event) {
+                $event = Event::whereRaw('LOWER(event_name) = ?', [strtolower($certificate->nama_kegiatan)])->first();
+            }
+            
+            // If still not found, search by participant NIM across all events
+            if (!$event && $certificate->nim) {
+                $participant = EventParticipant::where('nim', $certificate->nim)->first();
+                if ($participant) {
+                    $event = $participant->event;
+                }
+            }
+            
             if ($event) {
                 $participant = $event->participants()
                     ->where('nim', $certificate->nim)

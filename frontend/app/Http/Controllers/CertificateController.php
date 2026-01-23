@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Certificate;
 use App\Models\Event;
+use App\Models\EventParticipant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\VerifyCertificateJob; // Job baru
@@ -219,6 +220,41 @@ class CertificateController extends Controller
 
         // --- END LOGIKA VALIDASI FONT ---
 
+        // Fetch participant data for internal certificates (for history view)
+        $participantData = null;
+        if ($certificate->certificate_type === 'internal' && $certificate->nim) {
+            // Try exact match first, then fuzzy match
+            $event = Event::where('event_name', $certificate->nama_kegiatan)->first();
+            
+            // If not found, try case-insensitive search
+            if (!$event) {
+                $event = Event::whereRaw('LOWER(event_name) = ?', [strtolower($certificate->nama_kegiatan)])->first();
+            }
+            
+            // If still not found, search by participant NIM across all events
+            if (!$event && $certificate->nim) {
+                $participant = EventParticipant::where('nim', $certificate->nim)->first();
+                if ($participant) {
+                    $event = $participant->event;
+                }
+            }
+            
+            if ($event) {
+                $participant = $event->participants()
+                    ->where('nim', $certificate->nim)
+                    ->first();
+                if ($participant) {
+                    $participantData = [
+                        'name' => $participant->participant_name,
+                        'nim' => $participant->nim,
+                        'faculty' => $participant->faculty,
+                        'study_program' => $participant->study_program,
+                        'event_name' => $event->event_name,
+                    ];
+                }
+            }
+        }
+
         return view('results', [
             'certificate' => $certificate,
             'certificate_type' => $certificate->certificate_type ?? 'external',
@@ -232,7 +268,7 @@ class CertificateController extends Controller
             'internal_verified' => $certificate->internal_verified ?? false,
             'internal_verification_notes' => $certificate->internal_verification_notes ?? null,
             'internal_matched_event_name' => $certificate->nama_kegiatan ?? null,
-            'internal_participant_data' => null,
+            'internal_participant_data' => $participantData,
         ]);
     }
 
