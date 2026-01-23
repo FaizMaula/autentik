@@ -137,7 +137,7 @@
 
         <!-- Pagination -->
         <div class="mt-8">
-          {{ $histories->links() }}
+          {{ $histories->links('vendor.pagination.tailwind') }}
         </div>
       </div>
     @endif

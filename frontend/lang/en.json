@@ -346,5 +346,11 @@
     "print.matchField": "Field",
     "print.matchRate": "Match Rate",
     "print.noData": "No data available",
-    "results.aiVerification": "AI Verification"
+    "results.aiVerification": "AI Verification",
+
+    "pagination.previous": "Previous",
+    "pagination.next": "Next",
+    "pagination.showing": "Showing",
+    "pagination.of": "of",
+    "pagination.data": "data"
 }

@@ -346,5 +346,11 @@
     "print.matchField": "Field",
     "print.matchRate": "Kecocokan",
     "print.noData": "Tidak ada data",
-    "results.aiVerification": "Verifikasi AI"
+    "results.aiVerification": "Verifikasi AI",
+
+    "pagination.previous": "Sebelumnya",
+    "pagination.next": "Berikutnya",
+    "pagination.showing": "Menampilkan",
+    "pagination.of": "dari",
+    "pagination.data": "data"
 }

@@ -4,8 +4,8 @@
 <section class="relative min-h-screen flex flex-col pt-20 pb-0 overflow-hidden">
   @include('components.animated-background', ['showWatermark' => true])
 
-  <div class="flex-grow py-8 px-3 md:px-4">
-    <div class="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+  <div class="flex-grow py-8 px-2 md:px-3">
+    <div class="max-w-[95rem] mx-auto px-3 md:px-4 relative z-10">
       <!-- Back to Dashboard -->
       <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-[#B62A2D] transition-colors mb-6">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,16 +78,16 @@
           <table class="w-full table-auto">
             <thead class="bg-gray-100 dark:bg-[#333334]">
               <tr>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">#</th>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.user') }}</th>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.name') }}</th>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.eventName') }}</th>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.organizer') }}</th>
-                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.type') ?? 'Type' }}</th>
-                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('results.status') }}</th>
-                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.academicYear') }}</th>
-                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.verifiedAt') }}</th>
-                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.actions') }}</th>
+                <th class="px-3 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">#</th>
+                <th class="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.user') }}</th>
+                <th class="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.name') }}</th>
+                <th class="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.eventName') }}</th>
+                <th class="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('form.organizer') }}</th>
+                <th class="px-3 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.type') ?? 'Type' }}</th>
+                <th class="px-3 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('results.status') }}</th>
+                <th class="px-3 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.academicYear') }}</th>
+                <th class="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.verifiedAt') }}</th>
+                <th class="px-3 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('admin.actions') }}</th>
               </tr>
             </thead>
             <tbody id="historyTableBody" class="divide-y divide-gray-200 dark:divide-[#3D3D3E]">
@@ -104,17 +104,17 @@
                     data-penyelenggara="{{ strtolower($certificate->penyelenggara ?? '') }}"
                     data-status="{{ $statusKey }}"
                     data-academic-year="{{ $certificate->academic_year_display }}">
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400 row-number">
+                  <td class="px-3 py-4 text-gray-600 dark:text-gray-400 row-number">
                     {{ ($certificates->currentPage() - 1) * $certificates->perPage() + $index + 1 }}
                   </td>
-                  <td class="px-6 py-4">
+                  <td class="px-4 py-4">
                     <div class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->user->name ?? '-' }}</div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">{{ $certificate->user->email ?? '-' }}</div>
                   </td>
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $certificate->nama ?? '-' }}</td>
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $certificate->nama_kegiatan ?? '-' }}</td>
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ $certificate->penyelenggara ?? '-' }}</td>
-                  <td class="px-6 py-4 text-center">
+                  <td class="px-4 py-4 text-gray-600 dark:text-gray-400">{{ $certificate->nama ?? '-' }}</td>
+                  <td class="px-4 py-4 text-gray-600 dark:text-gray-400">{{ $certificate->nama_kegiatan ?? '-' }}</td>
+                  <td class="px-4 py-4 text-gray-600 dark:text-gray-400">{{ $certificate->penyelenggara ?? '-' }}</td>
+                  <td class="px-3 py-4 text-center">
                     @if($certificate->certificate_type === 'internal' || empty($certificate->berkas))
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400">
                         Internal
@@ -125,7 +125,7 @@
                       </span>
                     @endif
                   </td>
-                  <td class="px-6 py-4 text-center">
+                  <td class="px-3 py-4 text-center">
                     @php
                       $status = $certificate->overall_status ?? 'pending';
                     @endphp
@@ -143,15 +143,15 @@
                       </span>
                     @endif
                   </td>
-                  <td class="px-6 py-4 text-center text-gray-600 dark:text-gray-400">
+                  <td class="px-3 py-4 text-center text-gray-600 dark:text-gray-400">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
                       {{ $certificate->academic_year_display }}
                     </span>
                   </td>
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
+                  <td class="px-4 py-4 text-gray-600 dark:text-gray-400">
                     {{ $certificate->created_at->format('d M Y, H:i') }}
                   </td>
-                  <td class="px-6 py-4 text-center">
+                  <td class="px-3 py-4 text-center">
                     <a href="{{ route('admin.result.show', $certificate->id) }}" 
                        class="inline-flex items-center justify-center w-9 h-9 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
                        title="{{ __('admin.viewDetails') }}">
@@ -164,7 +164,7 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="10" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colspan="10" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                     <div class="flex flex-col items-center gap-3">
                       <svg class="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -180,8 +180,8 @@
         
         <!-- Pagination -->
         @if($certificates->hasPages())
-          <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-            {{ $certificates->links('pagination::simple-tailwind') }}
+          <div class="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+            {{ $certificates->links('vendor.pagination.tailwind') }}
           </div>
         @endif
       </div>
