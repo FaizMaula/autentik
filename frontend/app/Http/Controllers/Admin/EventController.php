@@ -209,6 +209,7 @@ class EventController extends Controller
 
         return view('results', [
             'certificate'    => $certificate,
+            'certificate_type' => $certificate->certificate_type ?? 'external',
             'match_scores'   => $analysis->match_scores ?? [],
             'final_score'    => $certificate->final_score,
             'verifikasi_ai'  => $this->translateAiResponse(
@@ -219,6 +220,10 @@ class EventController extends Controller
             'font_results'   => $analysis->font_results ?? [],
             'ocr_details'    => $ocr->ocr_details ?? [],
             'isAdmin'        => true,
+            'internal_verified' => $certificate->internal_verified ?? false,
+            'internal_verification_notes' => $certificate->internal_verification_notes ?? null,
+            'internal_matched_event_name' => $certificate->nama_kegiatan ?? null,
+            'internal_participant_data' => null,
         ]);
     }
 
