@@ -1280,10 +1280,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
+  // Get header element for hiding when modal is open
+  const appHeader = document.querySelector('[data-app-header]')?.closest('.fixed');
+  
   function openCertificateModal() {
     certificateModal.classList.remove('hidden');
     certificateModal.classList.add('flex');
     document.body.style.overflow = 'hidden';
+    
+    // Hide the header completely when modal is open
+    if (appHeader) {
+      appHeader.style.display = 'none';
+    }
     
     // Show loader
     imageLoader.classList.remove('hidden');
@@ -1306,6 +1314,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
     certificateImage.src = '';
     certificatePdf.src = '';
+    
+    // Show the header again
+    if (appHeader) {
+      appHeader.style.display = '';
+    }
     
     // Reset imageWrapper to original state
     if (imageWrapper && originalImageWrapperContent) {
@@ -1346,13 +1359,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const isPdf = fileUrl.toLowerCase().includes('.pdf') || data.file_type === 'pdf';
         
         if (isPdf) {
-          // Show PDF in iframe
-          certificatePdf.src = fileUrl;
-          certificatePdf.classList.remove('hidden');
-          certificateImage.classList.add('hidden');
+          // PDF cannot be displayed in iframe due to CSP - show open in new tab button
           imageLoader.classList.add('hidden');
+          certificateImage.classList.add('hidden');
+          certificatePdf.classList.add('hidden');
+          imageWrapper.innerHTML = `
+            <div class="text-center p-8">
+              <i data-lucide="file-text" class="w-20 h-20 text-blue-500 mx-auto mb-4"></i>
+              <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg mb-2">{{ __("results.pdfDocument") ?? 'Dokumen PDF' }}</p>
+              <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">{{ __("results.pdfCannotBeDisplayed") }}</p>
+              <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" 
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors">
+                <i data-lucide="external-link" class="w-5 h-5"></i>
+                {{ __("results.openInNewTab") }}
+              </a>
+            </div>
+          `;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
         } else {
-          // Show image
+          // Show image - use crossorigin anonymous to avoid CORS issues
+          certificateImage.crossOrigin = 'anonymous';
           certificateImage.onload = function() {
             console.log('Image loaded successfully');
             imageLoader.classList.add('hidden');
@@ -1360,13 +1386,25 @@ document.addEventListener('DOMContentLoaded', () => {
           };
           certificateImage.onerror = function(e) {
             console.error('Image load error:', e);
+            // Try without crossorigin
+            certificateImage.crossOrigin = null;
+            const retryUrl = fileUrl + (fileUrl.includes('?') ? '&' : '?') + 'retry=1';
+            if (!certificateImage.src.includes('retry=1')) {
+              console.log('Retrying without crossorigin...');
+              certificateImage.src = retryUrl;
+              return;
+            }
             imageLoader.classList.add('hidden');
-            // Show error message in the viewer instead of closing
+            // Show error message with open in new tab option
             imageWrapper.innerHTML = `
               <div class="text-center p-8">
                 <i data-lucide="image-off" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
-                <p class="text-gray-600 dark:text-gray-400 font-medium">{{ __("results.imageLoadError") ?? 'Gagal memuat gambar' }}</p>
-                <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">{{ __("results.tryAgainLater") ?? 'Silakan coba lagi nanti' }}</p>
+                <p class="text-gray-600 dark:text-gray-400 font-medium mb-4">{{ __("results.imageLoadError") ?? 'Gagal memuat gambar' }}</p>
+                <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors text-sm">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                  {{ __("results.openInNewTab") }}
+                </a>
               </div>
             `;
             if (typeof lucide !== 'undefined') lucide.createIcons();

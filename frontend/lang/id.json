@@ -197,6 +197,7 @@
     "results.fileUrlError": "Gagal memuat file sertifikat",
     "results.imageLoadError": "Gagal memuat gambar sertifikat",
     "results.tryAgainLater": "Silakan coba lagi nanti",
+    "results.pdfDocument": "Dokumen PDF",
     "results.unsupportedFileType": "Tipe file tidak didukung",
     "results.openInNewTab": "Buka di Tab Baru",
     "results.pdfCannotBeDisplayed": "PDF tidak dapat ditampilkan di browser. Klik tombol di bawah untuk membuka.",
