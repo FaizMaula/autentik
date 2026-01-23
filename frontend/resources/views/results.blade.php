@@ -799,12 +799,12 @@
 
     {{-- Certificate View Modal with Zoom/Drag --}}
     @if(!$isInternal && !empty($certificate->berkas))
-    <div id="certificateModal" class="fixed inset-0 z-[100] hidden items-center justify-center" role="dialog" aria-modal="true">
-      {{-- Overlay --}}
-      <div id="certificateModalOverlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div id="certificateModal" class="fixed inset-0 z-[9999] hidden items-center justify-center" role="dialog" aria-modal="true">
+      {{-- Overlay that covers EVERYTHING including header --}}
+      <div id="certificateModalOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
       
       {{-- Modal Content --}}
-      <div class="relative z-10 w-full h-full md:h-auto md:max-h-[90vh] md:max-w-6xl md:mx-4 flex flex-col bg-white dark:bg-[#222223] md:rounded-2xl overflow-hidden shadow-2xl">
+      <div class="relative z-10 w-full h-full flex flex-col bg-white dark:bg-[#222223] overflow-hidden shadow-2xl">
         {{-- Header --}}
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#333334]">
           <h3 class="text-lg font-semibold text-[#222223] dark:text-[#FEFEFE] flex items-center gap-2">
@@ -1297,12 +1297,20 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCertificateFile();
   }
   
+  // Store original imageWrapper content for reset
+  const originalImageWrapperContent = imageWrapper ? imageWrapper.innerHTML : '';
+  
   function closeCertificateModal() {
     certificateModal.classList.add('hidden');
     certificateModal.classList.remove('flex');
     document.body.style.overflow = '';
     certificateImage.src = '';
     certificatePdf.src = '';
+    
+    // Reset imageWrapper to original state
+    if (imageWrapper && originalImageWrapperContent) {
+      imageWrapper.innerHTML = originalImageWrapperContent;
+    }
   }
   
   async function fetchCertificateFile() {
@@ -1311,18 +1319,31 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `/admin/certificate/${certificateId}/file-url`
         : `/certificate/${certificateId}/file-url`;
       
+      console.log('Fetching certificate URL from:', url);
+      
       const response = await fetch(url, {
         headers: {
           'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        credentials: 'same-origin'
       });
       
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('Response data:', data);
       
       if (data.success && data.url) {
         const fileUrl = data.url;
-        const isPdf = fileUrl.toLowerCase().includes('.pdf') || data.mime_type === 'application/pdf';
+        console.log('File URL:', fileUrl);
+        
+        const isPdf = fileUrl.toLowerCase().includes('.pdf') || data.file_type === 'pdf';
         
         if (isPdf) {
           // Show PDF in iframe
@@ -1333,24 +1354,47 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           // Show image
           certificateImage.onload = function() {
+            console.log('Image loaded successfully');
             imageLoader.classList.add('hidden');
             certificateImage.classList.remove('hidden');
           };
-          certificateImage.onerror = function() {
+          certificateImage.onerror = function(e) {
+            console.error('Image load error:', e);
             imageLoader.classList.add('hidden');
-            alert('{{ __("results.fileUrlError") }}');
-            closeCertificateModal();
+            // Show error message in the viewer instead of closing
+            imageWrapper.innerHTML = `
+              <div class="text-center p-8">
+                <i data-lucide="image-off" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">{{ __("results.imageLoadError") ?? 'Gagal memuat gambar' }}</p>
+                <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">{{ __("results.tryAgainLater") ?? 'Silakan coba lagi nanti' }}</p>
+              </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
           };
           certificateImage.src = fileUrl;
         }
       } else {
-        alert(data.message || '{{ __("results.fileUrlError") }}');
-        closeCertificateModal();
+        console.error('Failed to get file URL:', data.message);
+        imageLoader.classList.add('hidden');
+        imageWrapper.innerHTML = `
+          <div class="text-center p-8">
+            <i data-lucide="file-x" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400 font-medium">${data.message || '{{ __("results.fileUrlError") }}'}</p>
+          </div>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
     } catch (error) {
       console.error('Error fetching certificate file:', error);
-      alert('{{ __("results.fileUrlError") }}');
-      closeCertificateModal();
+      imageLoader.classList.add('hidden');
+      imageWrapper.innerHTML = `
+        <div class="text-center p-8">
+          <i data-lucide="alert-circle" class="w-16 h-16 text-red-400 mx-auto mb-4"></i>
+          <p class="text-gray-600 dark:text-gray-400 font-medium">{{ __("results.fileUrlError") }}</p>
+          <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">${error.message}</p>
+        </div>
+      `;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
   }
   

@@ -195,6 +195,8 @@
     "results.viewCertificate": "View Certificate",
     "results.noFileUploaded": "No file uploaded for this certificate",
     "results.fileUrlError": "Failed to load certificate file",
+    "results.imageLoadError": "Failed to load certificate image",
+    "results.tryAgainLater": "Please try again later",
     "results.unsupportedFileType": "Unsupported file type",
     "results.openInNewTab": "Open in New Tab",
     "results.pdfCannotBeDisplayed": "PDF cannot be displayed in browser. Click button below to open.",
