@@ -188,6 +188,8 @@
     "results.noDataFound": "Data Not Found",
     "results.noDataFoundDesc": "Student ID or participant data is not registered in this event database",
     "results.noVerificationNotes": "No verification notes available",
+    "results.nameMismatch": "Name does not match",
+    "results.eventInfo": "Event Information",
     "results.backButton": "Back",
     "results.restartButton": "New Verification",
     "results.viewCertificate": "View Certificate",

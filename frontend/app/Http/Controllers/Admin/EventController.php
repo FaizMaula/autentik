@@ -207,6 +207,26 @@ class EventController extends Controller
         $ocr = $certificate->ocrResults()->latest()->first();
         $analysis = $certificate->analysisResults()->latest()->first();
 
+        // Fetch participant data for internal certificates
+        $participantData = null;
+        if ($certificate->certificate_type === 'internal' && $certificate->nim) {
+            $event = Event::where('event_name', $certificate->nama_kegiatan)->first();
+            if ($event) {
+                $participant = $event->participants()
+                    ->where('nim', $certificate->nim)
+                    ->first();
+                if ($participant) {
+                    $participantData = [
+                        'name' => $participant->participant_name,
+                        'nim' => $participant->nim,
+                        'faculty' => $participant->faculty,
+                        'study_program' => $participant->study_program,
+                        'event_name' => $event->event_name,
+                    ];
+                }
+            }
+        }
+
         return view('results', [
             'certificate'    => $certificate,
             'certificate_type' => $certificate->certificate_type ?? 'external',
@@ -223,7 +243,7 @@ class EventController extends Controller
             'internal_verified' => $certificate->internal_verified ?? false,
             'internal_verification_notes' => $certificate->internal_verification_notes ?? null,
             'internal_matched_event_name' => $certificate->nama_kegiatan ?? null,
-            'internal_participant_data' => null,
+            'internal_participant_data' => $participantData,
         ]);
     }
 

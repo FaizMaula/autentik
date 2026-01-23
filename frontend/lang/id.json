@@ -188,6 +188,8 @@
     "results.noDataFound": "Data Tidak Ditemukan",
     "results.noDataFoundDesc": "NIM atau data peserta tidak terdaftar dalam database kegiatan ini",
     "results.noVerificationNotes": "Tidak ada catatan verifikasi tersedia",
+    "results.nameMismatch": "Nama tidak cocok",
+    "results.eventInfo": "Informasi Kegiatan",
     "results.backButton": "Kembali",
     "results.restartButton": "Verifikasi Ulang",
     "results.viewCertificate": "Lihat Sertifikat",

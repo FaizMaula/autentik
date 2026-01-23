@@ -131,7 +131,7 @@
             <div class="glass-card-strong rounded-2xl p-3 space-y-2" id="resultsNav">
               
               @if($isInternal)
-              {{-- Internal Navigation Buttons --}}
+              {{-- Internal Navigation Buttons (2 sections only) --}}
               <button type="button" data-slide-target="internal-status" class="results-nav-btn active w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative">
                 <div class="w-10 h-10 rounded-full {{ $internal_verified ? 'bg-green-100 dark:bg-green-900/40' : 'bg-red-100 dark:bg-red-900/40' }} flex items-center justify-center group-hover:bg-opacity-80 transition-colors">
                   <i data-lucide="{{ $statusIcon }}" class="w-6 h-6 {{ $statusColor }}"></i>
@@ -141,21 +141,12 @@
                 </div>
               </button>
               
-              <button type="button" data-slide-target="internal-database" class="results-nav-btn w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative">
+              <button type="button" data-slide-target="internal-detail" class="results-nav-btn w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative">
                 <div class="w-10 h-10 rounded-full bg-[#B62A2D]/10 dark:bg-[#B62A2D]/20 flex items-center justify-center group-hover:bg-[#B62A2D]/20 dark:group-hover:bg-[#B62A2D]/30 transition-colors">
-                  <i data-lucide="database" class="w-6 h-6 text-[#B62A2D]"></i>
+                  <i data-lucide="clipboard-check" class="w-6 h-6 text-[#B62A2D]"></i>
                 </div>
                 <div class="absolute left-full ml-3 px-3 py-1.5 bg-[#222223] dark:bg-[#FEFEFE] text-white dark:text-[#222223] text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  {{ __('results.databaseMatch') }}
-                </div>
-              </button>
-              
-              <button type="button" data-slide-target="internal-notes" class="results-nav-btn w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative">
-                <div class="w-10 h-10 rounded-full bg-[#B62A2D]/10 dark:bg-[#B62A2D]/20 flex items-center justify-center group-hover:bg-[#B62A2D]/20 dark:group-hover:bg-[#B62A2D]/30 transition-colors">
-                  <i data-lucide="file-check" class="w-6 h-6 text-[#B62A2D]"></i>
-                </div>
-                <div class="absolute left-full ml-3 px-3 py-1.5 bg-[#222223] dark:bg-[#FEFEFE] text-white dark:text-[#222223] text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  {{ __('results.verificationNotes') }}
+                  {{ __('results.verificationDetails') }}
                 </div>
               </button>
               
@@ -226,15 +217,12 @@
         <div class="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-full px-4">
           <div class="glass-card-strong rounded-full px-3 py-2.5 flex items-center justify-center gap-2 sm:gap-3 shadow-2xl overflow-x-auto" id="resultsNavMobile">
             @if($isInternal)
-            {{-- Internal Mobile Navigation --}}
+            {{-- Internal Mobile Navigation (2 sections only) --}}
             <button type="button" data-slide-target="internal-status" class="results-nav-btn-mobile active w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
               <i data-lucide="{{ $statusIcon }}" class="w-4 h-4 sm:w-5 sm:h-5 {{ $statusColor }}"></i>
             </button>
-            <button type="button" data-slide-target="internal-database" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
-              <i data-lucide="database" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
-            </button>
-            <button type="button" data-slide-target="internal-notes" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
-              <i data-lucide="file-check" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
+            <button type="button" data-slide-target="internal-detail" class="results-nav-btn-mobile w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0">
+              <i data-lucide="clipboard-check" class="w-4 h-4 sm:w-5 sm:h-5 text-[#B62A2D]"></i>
             </button>
             @else
             {{-- External Mobile Navigation --}}
@@ -267,15 +255,15 @@
           
           @if($isInternal)
           {{-- ========================================== --}}
-          {{-- INTERNAL CERTIFICATE RESULTS (Slider)     --}}
+          {{-- INTERNAL CERTIFICATE RESULTS (Simplified) --}}
           {{-- ========================================== --}}
           <div class="results-slider-container relative overflow-visible md:overflow-hidden">
             
-            {{-- Slide 1: Status & Submitted Data --}}
+            {{-- Section 1: Status Keseluruhan --}}
             <div class="results-slide active" data-slide="internal-status">
               <div class="glass-card-strong rounded-2xl p-8 animate-fade-in">
                 {{-- Status Header --}}
-                <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                   <div class="flex items-center gap-6">
                     <div class="p-4 rounded-full {{ $internal_verified ? 'bg-green-100 dark:bg-green-900/40' : 'bg-red-100 dark:bg-red-900/40' }}">
                       <i data-lucide="{{ $statusIcon }}" class="{{ $statusColor }}" style="width:48px;height:48px"></i>
@@ -286,23 +274,100 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {{-- Submitted Data --}}
-                <div class="bg-gray-50 dark:bg-[#333334] rounded-xl p-6">
-                  <h3 class="text-lg font-bold text-[#222223] dark:text-[#FEFEFE] mb-4 flex items-center gap-2">
-                    <i data-lucide="user" class="w-5 h-5 text-[#B62A2D]"></i>
-                    {{ __('results.submittedData') }}
-                  </h3>
+            {{-- Section 2: Detail Verifikasi (Combined) --}}
+            <div class="results-slide" data-slide="internal-detail">
+              <div class="glass-card-strong rounded-2xl p-8 animate-fade-in">
+                <div class="flex items-start gap-4 mb-6">
+                  <div class="p-3 bg-[#B62A2D] rounded-lg">
+                    <i data-lucide="clipboard-check" class="w-8 h-8 text-white"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-2xl font-bold text-[#222223] dark:text-[#FEFEFE] mb-1">{{ __('results.verificationDetails') }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400">{{ __('results.internalVerificationDesc') }}</p>
+                  </div>
+                </div>
+                
+                {{-- Comparison Layout: Desktop side-by-side, Mobile vertical --}}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                  {{-- Left: Data yang Dimasukkan --}}
+                  <div class="bg-gray-50 dark:bg-[#333334] rounded-xl p-5">
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
+                      <i data-lucide="edit-3" class="w-4 h-4"></i>
+                      {{ __('results.submittedData') }}
+                    </h4>
+                    <div class="space-y-3">
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.name') }}</p>
+                        <p class="font-semibold text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nama }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.nim') }}</p>
+                        <p class="font-semibold text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nim }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {{-- Right: Hasil Pencocokan --}}
+                  <div class="{{ $internal_verified ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' }} rounded-xl p-5">
+                    <h4 class="text-sm font-bold {{ $internal_verified ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }} uppercase mb-4 flex items-center gap-2">
+                      <i data-lucide="database" class="w-4 h-4"></i>
+                      {{ __('results.databaseMatch') }}
+                    </h4>
+                    
+                    @if($internal_participant_data)
+                    <div class="space-y-3">
+                      {{-- NIM Match --}}
+                      <div class="flex items-center justify-between p-3 bg-white/50 dark:bg-black/20 rounded-lg">
+                        <div>
+                          <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.nim') }}</p>
+                          <p class="font-semibold {{ $internal_verified ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300' }}">{{ $internal_participant_data['nim'] }}</p>
+                        </div>
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-500"></i>
+                      </div>
+                      {{-- Name Match --}}
+                      @php
+                        $nameMatch = strtolower(trim($certificate->nama)) === strtolower(trim($internal_participant_data['name']));
+                        $similarity = 0;
+                        if (!$nameMatch) {
+                          similar_text(strtolower($certificate->nama), strtolower($internal_participant_data['name']), $similarity);
+                        }
+                      @endphp
+                      <div class="flex items-center justify-between p-3 bg-white/50 dark:bg-black/20 rounded-lg">
+                        <div>
+                          <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.name') }}</p>
+                          <p class="font-semibold {{ $nameMatch ? 'text-green-800 dark:text-green-300' : 'text-amber-700 dark:text-amber-400' }}">{{ $internal_participant_data['name'] }}</p>
+                          @if(!$nameMatch)
+                          <p class="text-xs text-amber-600 dark:text-amber-500 mt-1">{{ __('results.nameMismatch') }}</p>
+                          @endif
+                        </div>
+                        @if($nameMatch)
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-500"></i>
+                        @else
+                        <i data-lucide="alert-circle" class="w-6 h-6 text-amber-500"></i>
+                        @endif
+                      </div>
+                    </div>
+                    @else
+                    <div class="text-center py-4">
+                      <i data-lucide="x-circle" class="w-10 h-10 text-red-500 mx-auto mb-2"></i>
+                      <p class="text-red-700 dark:text-red-400 font-semibold">{{ __('results.noDataFound') }}</p>
+                      <p class="text-red-600 dark:text-red-500 text-sm mt-1">{{ __('results.noDataFoundDesc') }}</p>
+                    </div>
+                    @endif
+                  </div>
+                </div>
+
+                {{-- Event Info (non-editable, auto-filled) --}}
+                <div class="bg-gray-100 dark:bg-[#2a2a2b] rounded-xl p-5">
+                  <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4"></i>
+                    {{ __('results.eventInfo') ?? 'Informasi Kegiatan' }}
+                  </h4>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.name') }}</p>
-                      <p class="font-semibold text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nama }}</p>
-                    </div>
-                    <div>
-                      <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.nim') }}</p>
-                      <p class="font-semibold text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nim }}</p>
-                    </div>
-                    <div class="md:col-span-2">
                       <p class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">{{ __('form.eventName') }}</p>
                       <p class="font-semibold text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->nama_kegiatan }}</p>
                     </div>
@@ -312,90 +377,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {{-- Slide 2: Database Match Result --}}
-            <div class="results-slide" data-slide="internal-database">
-              <div class="glass-card-strong rounded-2xl p-8 animate-fade-in">
-                <div class="flex items-start gap-4 mb-6">
-                  <div class="p-3 {{ $internal_verified ? 'bg-green-500' : 'bg-red-500' }} rounded-lg">
-                    <i data-lucide="database" class="w-8 h-8 text-white"></i>
-                  </div>
-                  <div>
-                    <h3 class="text-2xl font-bold text-[#222223] dark:text-[#FEFEFE] mb-1">{{ __('results.databaseMatch') }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400">{{ __('results.databaseMatchDesc') }}</p>
-                  </div>
-                </div>
-                
-                @if($internal_participant_data)
-                <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p class="text-xs text-green-600 dark:text-green-500 uppercase mb-1">{{ __('results.registeredName') }}</p>
-                      <p class="font-semibold text-green-800 dark:text-green-300">{{ $internal_participant_data['name'] }}</p>
-                    </div>
-                    <div>
-                      <p class="text-xs text-green-600 dark:text-green-500 uppercase mb-1">{{ __('form.nim') }}</p>
-                      <p class="font-semibold text-green-800 dark:text-green-300">{{ $internal_participant_data['nim'] }}</p>
-                    </div>
-                    @if($internal_participant_data['faculty'])
-                    <div>
-                      <p class="text-xs text-green-600 dark:text-green-500 uppercase mb-1">{{ __('results.faculty') }}</p>
-                      <p class="font-semibold text-green-800 dark:text-green-300">{{ $internal_participant_data['faculty'] }}</p>
-                    </div>
-                    @endif
-                    @if($internal_participant_data['study_program'])
-                    <div>
-                      <p class="text-xs text-green-600 dark:text-green-500 uppercase mb-1">{{ __('results.studyProgram') }}</p>
-                      <p class="font-semibold text-green-800 dark:text-green-300">{{ $internal_participant_data['study_program'] }}</p>
-                    </div>
-                    @endif
-                  </div>
-                </div>
-                @else
-                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-                  <i data-lucide="x-circle" class="w-12 h-12 text-red-500 mx-auto mb-3"></i>
-                  <p class="text-red-700 dark:text-red-400 font-semibold">{{ __('results.noDataFound') }}</p>
-                  <p class="text-red-600 dark:text-red-500 text-sm mt-2">{{ __('results.noDataFoundDesc') }}</p>
-                </div>
-                @endif
-              </div>
-            </div>
-
-            {{-- Slide 3: Verification Notes --}}
-            <div class="results-slide" data-slide="internal-notes">
-              <div class="glass-card-strong rounded-2xl p-8 animate-fade-in">
-                <div class="flex items-start gap-4 mb-6">
-                  <div class="p-3 bg-[#B62A2D] rounded-lg">
-                    <i data-lucide="file-check" class="w-8 h-8 text-white"></i>
-                  </div>
-                  <div>
-                    <h3 class="text-2xl font-bold text-[#222223] dark:text-[#FEFEFE] mb-1">{{ __('results.verificationNotes') }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400">{{ __('results.verificationNotesDesc') }}</p>
-                  </div>
-                </div>
-                
-                @if($internal_verification_notes)
-                <div class="bg-gray-50 dark:bg-[#333334] rounded-xl p-6">
-                  <div class="text-gray-700 dark:text-gray-300 leading-relaxed space-y-3">
-                    @foreach(explode("\n", $internal_verification_notes) as $note)
-                      @if(trim($note))
-                      <p class="flex items-start gap-3 p-3 rounded-lg {{ str_contains($note, '✓') || str_contains(strtolower($note), 'ditemukan') || str_contains(strtolower($note), 'cocok') ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-100 dark:bg-[#222223]' }}">
-                        <i data-lucide="{{ str_contains($note, '✓') || str_contains(strtolower($note), 'ditemukan') || str_contains(strtolower($note), 'cocok') ? 'check-circle' : 'info' }}" 
-                           class="w-5 h-5 mt-0.5 flex-shrink-0 {{ str_contains($note, '✓') || str_contains(strtolower($note), 'ditemukan') || str_contains(strtolower($note), 'cocok') ? 'text-green-500' : 'text-gray-400' }}"></i>
-                        <span>{{ $note }}</span>
-                      </p>
-                      @endif
-                    @endforeach
-                  </div>
-                </div>
-                @else
-                <div class="text-center py-8 text-gray-500 bg-gray-50 dark:bg-[#333334] rounded-xl">
-                  <i data-lucide="file-x" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
-                  <p>{{ __('results.noVerificationNotes') }}</p>
-                </div>
-                @endif
               </div>
             </div>
             
