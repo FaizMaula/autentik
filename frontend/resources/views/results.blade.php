@@ -809,9 +809,10 @@
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#333334]">
           <h3 class="text-lg font-semibold text-[#222223] dark:text-[#FEFEFE] flex items-center gap-2">
             <i data-lucide="file-scan" class="w-5 h-5 text-blue-500"></i>
-            {{ __('results.viewCertificate') }}
+            <span class="hidden sm:inline">{{ __('results.viewCertificate') }}</span>
+            <span class="sm:hidden">{{ __('results.viewCertificate') }}</span>
           </h3>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 sm:gap-2">
             {{-- Zoom Controls --}}
             <button type="button" id="zoomOutBtn" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Zoom Out">
               <i data-lucide="zoom-out" class="w-5 h-5 text-gray-600 dark:text-gray-400"></i>
@@ -830,10 +831,22 @@
           </div>
         </div>
         
+        {{-- Mobile Tab Buttons (only visible on mobile) --}}
+        <div class="lg:hidden flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#2a2a2b]">
+          <button type="button" id="tabCertificateBtn" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 bg-white dark:bg-[#222223]">
+            <i data-lucide="image" class="w-4 h-4"></i>
+            {{ __('results.tabCertificate') ?? 'Sertifikat' }}
+          </button>
+          <button type="button" id="tabDataBtn" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+            {{ __('results.tabData') ?? 'Data' }}
+          </button>
+        </div>
+        
         {{-- Body: Image Left/Top, Data Right/Bottom --}}
         <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
           {{-- Certificate Image Viewer --}}
-          <div class="flex-1 lg:w-2/3 bg-gray-100 dark:bg-[#1a1a1b] overflow-hidden relative" id="imageViewerContainer">
+          <div id="certificateImagePanel" class="flex-1 lg:w-2/3 bg-gray-100 dark:bg-[#1a1a1b] overflow-hidden relative" id="imageViewerContainer">
             <div id="imageLoader" class="absolute inset-0 flex items-center justify-center">
               <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
             </div>
@@ -844,12 +857,12 @@
             </div>
           </div>
           
-          {{-- Form Data Panel --}}
-          <div class="lg:w-1/3 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 overflow-y-auto bg-white dark:bg-[#222223]">
+          {{-- Form Data Panel (hidden on mobile by default, shown on desktop) --}}
+          <div id="certificateDataPanel" class="hidden lg:block lg:w-1/3 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 overflow-y-auto bg-white dark:bg-[#222223]">
             <div class="p-4 md:p-6 space-y-4">
               <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
                 <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-                {{ __('results.submittedData') ?? 'Data yang Diajukan' }}
+                {{ __('results.submittedData') ?? 'Data yang Dimasukkan' }}
               </h4>
               
               <div class="space-y-3">
@@ -888,7 +901,7 @@
                 {{-- Academic Year --}}
                 <div class="p-3 bg-gray-50 dark:bg-[#333334] rounded-lg">
                   <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('form.academicYear') }}</p>
-                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->academic_year_display ?? '-' }}</p>
+                  <p class="font-medium text-[#222223] dark:text-[#FEFEFE]">{{ $certificate->tahun_akademik ?? '-' }}</p>
                 </div>
                 
                 {{-- Status --}}
@@ -1156,8 +1169,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const zoomResetBtn = document.getElementById('zoomResetBtn');
   const zoomLevelDisplay = document.getElementById('zoomLevel');
   
+  // Mobile tab elements
+  const tabCertificateBtn = document.getElementById('tabCertificateBtn');
+  const tabDataBtn = document.getElementById('tabDataBtn');
+  const certificateImagePanel = document.getElementById('certificateImagePanel');
+  const certificateDataPanel = document.getElementById('certificateDataPanel');
+  
   const certificateId = {{ $certificate->id ?? 0 }};
   const isAdmin = {{ isset($isAdmin) && $isAdmin ? 'true' : 'false' }};
+  
+  // Mobile tab switching
+  function switchToTab(tab) {
+    if (tab === 'certificate') {
+      // Show certificate image, hide data
+      certificateImagePanel.classList.remove('hidden');
+      certificateImagePanel.classList.add('flex-1');
+      certificateDataPanel.classList.add('hidden');
+      certificateDataPanel.classList.remove('flex-1');
+      
+      // Update tab button styles
+      tabCertificateBtn.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400', 'bg-white', 'dark:bg-[#222223]');
+      tabCertificateBtn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+      tabDataBtn.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400', 'bg-white', 'dark:bg-[#222223]');
+      tabDataBtn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+    } else {
+      // Show data, hide certificate image
+      certificateImagePanel.classList.add('hidden');
+      certificateImagePanel.classList.remove('flex-1');
+      certificateDataPanel.classList.remove('hidden');
+      certificateDataPanel.classList.add('flex-1');
+      
+      // Update tab button styles
+      tabDataBtn.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400', 'bg-white', 'dark:bg-[#222223]');
+      tabDataBtn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+      tabCertificateBtn.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400', 'bg-white', 'dark:bg-[#222223]');
+      tabCertificateBtn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+    }
+  }
+  
+  // Tab event listeners
+  if (tabCertificateBtn) {
+    tabCertificateBtn.addEventListener('click', () => switchToTab('certificate'));
+  }
+  if (tabDataBtn) {
+    tabDataBtn.addEventListener('click', () => switchToTab('data'));
+  }
   
   // Zoom/Pan State
   let currentZoom = 1;
@@ -1292,6 +1348,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (appHeader) {
       appHeader.style.display = 'none';
     }
+    
+    // Reset to certificate tab on mobile
+    switchToTab('certificate');
     
     // Show loader
     imageLoader.classList.remove('hidden');

@@ -193,6 +193,8 @@
     "results.backButton": "Kembali",
     "results.restartButton": "Verifikasi Ulang",
     "results.viewCertificate": "Lihat Sertifikat",
+    "results.tabCertificate": "Sertifikat",
+    "results.tabData": "Data",
     "results.noFileUploaded": "Tidak ada file yang diunggah untuk sertifikat ini",
     "results.fileNotFound": "File sertifikat tidak ditemukan",
     "results.fileUrlError": "Gagal memuat file sertifikat",

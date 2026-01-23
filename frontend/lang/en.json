@@ -193,6 +193,8 @@
     "results.backButton": "Back",
     "results.restartButton": "New Verification",
     "results.viewCertificate": "View Certificate",
+    "results.tabCertificate": "Certificate",
+    "results.tabData": "Data",
     "results.noFileUploaded": "No file uploaded for this certificate",
     "results.fileNotFound": "Certificate file not found",
     "results.fileUrlError": "Failed to load certificate file",
